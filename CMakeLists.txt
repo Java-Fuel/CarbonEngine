@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.25)
 
-set(CarbonEngine_CurrentVersion 0.0.1)
+project(CarbonEngine)
 
-add_subdirectory(src/Core)
+add_subdirectory(Carbon/Utils)
+add_subdirectory(Carbon/Math)
+add_subdirectory(Carbon/Platform)
+add_subdirectory(Carbon/Renderer)
+add_subdirectory(Carbon/Core)
