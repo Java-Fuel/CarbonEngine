@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.25)
 
+# Set Configuration Properties/Values
+set(CMAKE_DEBUG_POSTFIX d)
+
+
 project(CarbonEngine)
 
 add_subdirectory(Carbon/Utils)
