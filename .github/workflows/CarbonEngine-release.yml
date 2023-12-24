@@ -4,7 +4,7 @@ name: CarbonEngine Build
 
 on:
   push:
-    branches: [ "release/*", "main" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -66,12 +66,6 @@ jobs:
           release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
-
-      - name: Print Working Dir
-        run: pwd 
-
-      - name: List Files
-        run: ls 
 
       - name: Package Release
         run: Compress-Archive -Path ./* -Destination ./CarbonEngine.zip
