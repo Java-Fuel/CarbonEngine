@@ -64,7 +64,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
           release_name: Release ${{ github.ref_name }}
           draft: false
-          prerelease: true
+          prerelease: false
     
     
     
