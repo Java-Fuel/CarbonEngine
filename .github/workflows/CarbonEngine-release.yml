@@ -47,42 +47,42 @@ jobs:
         name: CarbonEngine
         path: build/packages/*
 
-  release:
-    if: contains(github.ref, 'tag/v')
-    permissions: write-all
-    runs-on: windows-latest
-    needs: build
-    steps:
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with: 
-          name: CarbonEngine
-          path: ./
+  # release:
+  #   if: contains(github.ref, 'tag/v')
+  #   permissions: write-all
+  #   runs-on: windows-latest
+  #   needs: build
+  #   steps:
+  #     - name: Download Artifact
+  #       uses: actions/download-artifact@v4
+  #       with: 
+  #         name: CarbonEngine
+  #         path: ./
 
-      - name: Create Release
-        id: create-release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.head_ref }}
-          release_name: Release ${{ github.head_ref }}
-          draft: false
-          prerelease: true
+  #     - name: Create Release
+  #       id: create-release
+  #       uses: actions/create-release@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         tag_name: ${{ github.head_ref }}
+  #         release_name: Release ${{ github.head_ref }}
+  #         draft: false
+  #         prerelease: true
 
-      - name: Package Release
-        run: Compress-Archive -Path ./* -Destination ./CarbonEngine.zip
+  #     - name: Package Release
+  #       run: Compress-Archive -Path ./* -Destination ./CarbonEngine.zip
 
-      - name: Upload Release
-        id: upload-release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./CarbonEngine.zip
-          asset_name: CarbonEngine.zip
-          asset_content_type: applications/zip
+  #     - name: Upload Release
+  #       id: upload-release
+  #       uses: actions/upload-release-asset@v1
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       with:
+  #         upload_url: ${{ steps.create-release.outputs.upload_url }}
+  #         asset_path: ./CarbonEngine.zip
+  #         asset_name: CarbonEngine.zip
+  #         asset_content_type: applications/zip
     
     
     
