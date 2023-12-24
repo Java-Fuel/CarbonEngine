@@ -37,11 +37,15 @@ jobs:
       shell: bash
       working-directory: ./build
 
-    - name: Zip Installer
-      run: zip ./carbonengine.zip ./packages
+    - name: Package Installer for Upload
+      run: Compress-Archive -Path ./packages/* -Destination ./carbonengine.zip
       working-directory: ./build
-      shell: bash
 
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: CarbonEngine
+        path: build/carbonengine.zip
     # - name: Test
     #   working-directory: ${{github.workspace}}/build
     #   # Execute tests defined by the CMake configuration.
