@@ -3,6 +3,9 @@
 name: CarbonEngine Build
 
 on:
+  create:
+    tags:
+      - 'v*'
   push:
     branches: [ "main" ]
   pull_request:
@@ -45,7 +48,7 @@ jobs:
         path: build/packages/*
 
   release:
-    # if: contains(github.ref, 'tags/v')
+    if: contains(github.ref, 'tags/v')
     permissions: write-all
     runs-on: windows-latest
     needs: build
