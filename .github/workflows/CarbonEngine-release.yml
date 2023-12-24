@@ -3,6 +3,9 @@
 name: CarbonEngine Build
 
 on:
+  create:
+    tag:
+      - 'v*'
   push:
     branches: [ "main" ]
   pull_request:
