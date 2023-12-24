@@ -45,7 +45,7 @@ jobs:
         path: build/packages/*
 
   release:
-    if: contains(github.ref, 'tag/v'
+    if: contains(github.ref, 'tag/v')
     permissions: write-all
     runs-on: windows-latest
     needs: build
