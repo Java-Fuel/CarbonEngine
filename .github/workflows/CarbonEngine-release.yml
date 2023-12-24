@@ -41,7 +41,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: CarbonEngine
-        path: build/carbonengine.zip
+        path: build/packages/*
     # - name: Test
     #   working-directory: ${{github.workspace}}/build
     #   # Execute tests defined by the CMake configuration.
