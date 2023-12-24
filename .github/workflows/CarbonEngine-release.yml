@@ -52,7 +52,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with: 
-          name: CarbonEngine.zip
+          name: CarbonEngine
 
       - name: Create Release
         id: create-release
