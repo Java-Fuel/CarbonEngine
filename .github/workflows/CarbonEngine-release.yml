@@ -37,10 +37,6 @@ jobs:
       shell: bash
       working-directory: ./build
 
-    - name: Package Installer for Upload
-      run: Compress-Archive -Path ./packages/* -Destination ./carbonengine.zip
-      working-directory: ./build
-
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
