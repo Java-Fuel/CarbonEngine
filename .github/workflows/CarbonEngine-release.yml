@@ -37,6 +37,11 @@ jobs:
       shell: bash
       working-directory: ./build
 
+    - name: Zip Installer
+      run: zip ./carbonengine.zip ./packages
+      working-directory: ./build
+      shell: bash
+
     # - name: Test
     #   working-directory: ${{github.workspace}}/build
     #   # Execute tests defined by the CMake configuration.
