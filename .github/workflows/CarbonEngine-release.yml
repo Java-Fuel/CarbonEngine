@@ -63,10 +63,10 @@ jobs:
 
       - name: Read Version File
         run: |
-          "version = Get-Content -path ./version.txt" >> "$GITHUB_ENV"
+          ech "(VERSION=" Get-Content -path ./version.txt) >> $env:GITHUB_ENV
 
       - name: Echo Version
-        run: echo $env:version
+        run: echo $env:VERSION
       
       - name: Create Release
         id: create-release
