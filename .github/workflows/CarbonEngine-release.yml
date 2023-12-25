@@ -62,15 +62,16 @@ jobs:
         run: ls
 
       - name: Read Version File
+        id: set-version
         run: |
           chcp 65001
           $VERSION = Get-Content -path ./version.txt
           Write-Output $VERSION
-          "VERSION=v$VERSION" >> $env:GITHUB_ENV
+          "VERSION=v$VERSION" >> $env:GITHUB_OUTPUT
 
       - name: Echo Version
         run: |
-          Write-Output $env:VERSION
+          Write-Output ${{ steps.set-version.outputs.VERSION }}
       
       - name: Create Release
         id: create-release
@@ -78,7 +79,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env:VERSION }}
+          tag_name: ${{ steps.set-version.output.VERSION }}
           release_name: Release $env:VERSION
           draft: false
           prerelease: true
