@@ -59,7 +59,10 @@ jobs:
           path: ./
 
       - name: Read Version File
-        run: $version = Get-Content -path ./version.txt
+        run: "$version = Get-Content -path ./version.txt"
+
+      - name: Echo Version
+        run: echo ${{ env.version }}
       
       - name: Create Release
         id: create-release
