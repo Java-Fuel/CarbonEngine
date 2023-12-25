@@ -29,7 +29,7 @@ jobs:
           chcp 65001
           $VERSION = Get-Content -path ./version.txt
           Write-Output $VERSION
-          $VERSION >> $GITHUB_ENV
+          $VERSION >> $env:GITHUB_ENV
 
     - name: Echo Version
       run: |
