@@ -38,6 +38,9 @@ jobs:
       shell: bash
       working-directory: ./build
 
+    - name: Move Version File
+      run: mv ./version.txt ./build/packages/version.txt
+
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
