@@ -26,7 +26,8 @@ jobs:
 
     - name: Read Version File
       run: |
-          echo (VERSION= Get-Content -path ./version.txt) >> $env:GITHUB_ENV
+          $VERSION=Get-Content -path ./version.txt)
+          $VERSION >> $env:GITHUB_ENV
 
     - name: Echo Version
       run: echo $env:VERSION
