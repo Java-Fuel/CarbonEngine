@@ -62,7 +62,7 @@ jobs:
         run: "$version = Get-Content -path ./version.txt"
 
       - name: Echo Version
-        run: echo ${{ env.version }}
+        run: "echo ${{ env.version }}"
       
       - name: Create Release
         id: create-release
