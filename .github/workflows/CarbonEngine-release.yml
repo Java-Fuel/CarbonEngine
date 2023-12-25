@@ -62,7 +62,7 @@ jobs:
         run: ls
 
       - name: Read Version File
-        run: $version = Get-Content -path ./version.txt >> "$env:GITHUB_ENV"
+        run: ($version = Get-Content -path ./version.txt) >> $env:GITHUB_ENV
 
       - name: Echo Version
         run: echo $env:version
