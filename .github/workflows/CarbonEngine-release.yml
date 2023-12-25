@@ -58,11 +58,14 @@ jobs:
           name: CarbonEngine
           path: ./
 
+      - name: List Directory Contents
+        run: ls
+
       - name: Read Version File
         run: "$version = Get-Content -path ./version.txt"
 
       - name: Echo Version
-        run: "echo ${{ env.version }}"
+        run: echo $version
       
       - name: Create Release
         id: create-release
