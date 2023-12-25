@@ -65,7 +65,7 @@ jobs:
         run: "$version = Get-Content -path ./version.txt"
 
       - name: Echo Version
-        run: echo $version
+        run: echo $env:version
       
       - name: Create Release
         id: create-release
