@@ -29,7 +29,8 @@ jobs:
           echo "action_state=yellow" >> "$GITHUB_ENV"
 
     - name: Echo Version
-      run: echo "$action_state"
+      run: |
+        printf '%s\n' "$action_state"
 
   #   - name: Configure CMake
   #     # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
