@@ -48,6 +48,7 @@ jobs:
         path: build/packages/*
 
   release:
+    if: contains( 'refs/heads/main', github.ref)
     permissions: write-all
     runs-on: windows-latest
     needs: build
