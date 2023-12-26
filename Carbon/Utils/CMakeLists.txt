@@ -7,6 +7,10 @@ set(target_so_version 1)
 
 project(${target} LANGUAGES C CXX VERSION ${target_version})
 
+# Enable Testing
+enable_testing()
+add_subdirectory(tests)
+
 # Specify include directories
 include_directories(includes)
 

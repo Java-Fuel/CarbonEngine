@@ -11,3 +11,6 @@ add_subdirectory(Carbon/Math)
 add_subdirectory(Carbon/Platform)
 add_subdirectory(Carbon/Renderer)
 add_subdirectory(Carbon/Core)
+
+
+include(CTest)

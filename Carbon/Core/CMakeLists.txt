@@ -17,6 +17,7 @@ include_directories(../Platform/includes)
 include_directories(../Renderer/includes)
 include_directories(../Utils/includes)
 
+
 add_executable(${target} ${src_files})
 
 # Link CarbonMath library
@@ -35,3 +36,5 @@ set(CPACK_PACKAGE_VERSION_MINOR "${${target}_VERSION_MINOR}")
 set(CPACK_SOURCE_GENERATOR "TGZ")
 SET(CPACK_OUTPUT_FILE_PREFIX packages)
 include(CPack)
+
+
