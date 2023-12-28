@@ -39,13 +39,13 @@ jobs:
       working-directory: ./build
 
     - name: Move Version File
-      run: mv ./version.txt ./build/packages/version.txt
+      run: mv ./version.txt ./build/Game/version.txt
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: CarbonEngine
-        path: build/packages/*
+        path: build/Game/*
 
   release:
     if: contains( 'refs/heads/main', github.ref)
