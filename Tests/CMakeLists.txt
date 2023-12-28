@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.25)
 
-enable_testing()
+set(target CarbonEngineTests)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(target carbonrenderer_tests)
+project(${target})
 
 include(FetchContent)
 FetchContent_Declare(
@@ -11,21 +13,19 @@ FetchContent_Declare(
   GIT_TAG v1.14.0
 )
 
-# Windows Only Setting: Prevent overriding the parent projects compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# Get Source Files
+# Find all CPP test files
 file(GLOB src *.cpp)
 
-include_directories(../includes)
-
+include_directories(${ENGINE_INCLUDES_DIR})
 add_executable(${target} ${src})
 
 target_link_libraries(
   ${target}
   GTest::gtest_main
-  CarbonRenderer
+  Engine
 )
 
 include(GoogleTest)

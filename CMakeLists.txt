@@ -6,11 +6,13 @@ set(CMAKE_DEBUG_POSTFIX d)
 
 project(CarbonEngine)
 
-add_subdirectory(Carbon/Utils)
-add_subdirectory(Carbon/Math)
-add_subdirectory(Carbon/Platform)
-add_subdirectory(Carbon/Renderer)
-add_subdirectory(Carbon/Core)
+set(ENGINE_INCLUDES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Engine/Includes)
+
+add_subdirectory(Engine)
+add_subdirectory(TestGame)
 
 
+# TESTING # 
+enable_testing()
+add_subdirectory(Tests)
 include(CTest)
