@@ -4,27 +4,22 @@ cmake_minimum_required(VERSION 3.25)
 set(target CarbonEngine_Core)
 set(target_version 0.0.1)
 
-project(${target} VERSION ${target_version})
-
 # Get Source Files 
 file(GLOB src_files src/*.cpp)
 message(src_files = "${src_files}")
 
-# Add includes directory 
-include_directories(includes)
-include_directories(../Math/includes)
-include_directories(../Platform/includes)
-include_directories(../Renderer/includes)
-include_directories(../Utils/includes)
-
-
 add_executable(${target} ${src_files})
 
+# Include proper directories
+target_include_directories(${target} PRIVATE ${ENGINE_INCLUDES_DIR})
+
 # Link CarbonMath library
-target_link_libraries(${target} PUBLIC CarbonMath CarbonPlatform CarbonRenderer CarbonUtils)
+target_link_libraries(${target} Engine)
 
 # Set target properties
-set(TARGET ${target} PROPERTY VERSION ${target_version})
+set(TARGET ${target} PROPERTIES
+    VERSION ${target_version}
+)
 
 # Install target
 install(TARGETS ${target} RUNTIME DESTINATION bin)
@@ -34,7 +29,7 @@ include(InstallRequiredSystemLibraries)
 set(CPACK_PACKAGE_VERSION_MAJOR "${${target}_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${${target}_VERSION_MINOR}")
 set(CPACK_SOURCE_GENERATOR "TGZ")
-SET(CPACK_OUTPUT_FILE_PREFIX packages)
+SET(CPACK_OUTPUT_FILE_PREFIX "Game")
 include(CPack)
 
 

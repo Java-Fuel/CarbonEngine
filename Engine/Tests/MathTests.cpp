@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-TEST(UtilTests, TestingUtils)
+TEST(FakeTest, TestingFakeTestsWork)
 {
   EXPECT_EQ(1, 1);
 }
