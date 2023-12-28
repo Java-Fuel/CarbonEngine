@@ -12,4 +12,7 @@ add_subdirectory(Engine)
 add_subdirectory(TestGame)
 
 
+# TESTING # 
+enable_testing()
+add_subdirectory(Tests)
 include(CTest)

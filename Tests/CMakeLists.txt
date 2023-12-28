@@ -4,6 +4,8 @@ set(target CarbonEngineTests)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+project(${target})
+
 include(FetchContent)
 FetchContent_Declare(
   googletest 
@@ -17,7 +19,7 @@ FetchContent_MakeAvailable(googletest)
 # Find all CPP test files
 file(GLOB src *.cpp)
 
-include_directories(../Includes)
+include_directories(${ENGINE_INCLUDES_DIR})
 add_executable(${target} ${src})
 
 target_link_libraries(

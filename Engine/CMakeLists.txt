@@ -27,8 +27,3 @@ install(TARGETS ${target}
  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
-
-# TESTING # 
-enable_testing()
-add_subdirectory(Tests)
-include(CTest)
