@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "Platform.hpp"
+#include "Platform/Platform.hpp"
 
 TEST(FakeTest, TestingFakeTestsWork)
 {

@@ -6,9 +6,7 @@ set(CMAKE_DEBUG_POSTFIX d)
 
 project(CarbonEngine)
 
-set(ENGINE_INCLUDES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Engine/Includes)
-set(SDL2_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Libs/SDL2/include)
-set(SDL_INCLUDES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Libs/SDL2/include)
+set(ENGINE_INCLUDES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Engine)
 
 add_subdirectory(Engine)
 add_subdirectory(TestGame)
