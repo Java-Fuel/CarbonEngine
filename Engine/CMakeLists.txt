@@ -8,22 +8,29 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 file(GLOB_RECURSE src *.cpp)
 file(GLOB headers Includes/*.hpp)
 
-# Ensure files are found (debugging)
-message(SRC = ${src})
-message(HEADERS ${headers})
+# Add SDL2
+find_package(SDL2 REQUIRED)
 
-include_directories(Includes)
+include_directories(Includes ${SDL_INCLUDES_DIR})
 
+# Create Engine
 add_library(${target} SHARED ${src})
+target_link_libraries(${target} SDL2::SDL2)
 
-# Set target properties
-set_target_properties(${target} PROPERTIES
-    VERSION ${target_version}
-    PUBLIC_HEADER "${headers}"
+# Copy SDL2 DLL to proper folder after build
+add_custom_command(TARGET ${target} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}>
+  COMMAND_EXPAND_LISTS
 )
 
-# Install DLL
-install(TARGETS ${target}
- LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
- PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
+# # Set target properties
+# set_target_properties(${target} PROPERTIES
+#     VERSION ${target_version}
+#     PUBLIC_HEADER "${headers}"
+# )
+
+# # Install DLL
+# install(TARGETS ${target}
+#  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+# )
