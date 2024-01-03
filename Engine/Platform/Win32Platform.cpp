@@ -4,12 +4,38 @@
 
 #include <windows.h>
 
+
 /**
  * Maintains all the state information for a Windows window
 */
 struct WindowsState {
   HWND hwnd;
 };
+
+
+/**
+ * @brief Windows Callback function to respond to Windows events
+ * @param handle a handle to the window where event occurred
+ * @param msg the event message code 
+ * @param wparam additional message information (depends on msg value)
+ * @param lparam additional message information (depends on msg value)
+ */
+LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+  
+  i64 result = 0;
+
+  switch(msg)
+  {
+    case WM_SIZE:
+    {
+      printf("Size of window changed");
+      result = 0;
+    }
+  }
+  
+  return result;
+}
 
 b8 Platform::Init(PlatformState* s, const char* applicationName, i32 x, i32 y, i32 width, i32 height)
 {
