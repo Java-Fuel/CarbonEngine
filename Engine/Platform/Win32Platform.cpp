@@ -94,7 +94,7 @@ b8 Platform::Init(PlatformState* s, const char* applicationName, i32 x, i32 y, i
   ws->hwnd = hwnd;
   s->state = ws;
   
-  return 1;
+  return 0;
 }
 
 

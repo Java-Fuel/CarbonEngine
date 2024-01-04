@@ -3,12 +3,17 @@ cmake_minimum_required(VERSION 3.25)
 
 set(target TestGame)
 set(target_version 0.0.1)
+set(platform WIN32)
 
 # Get Source Files 
 file(GLOB src_files src/*.cpp)
 message(src_files = "${src_files}")
 
-add_executable(${target} ${src_files})
+IF (WIN32)
+    set(platform WIN32)
+ENDIF()
+
+add_executable(${target} ${platform} ${src_files})
 
 
 # Include proper directories
