@@ -29,8 +29,18 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
   {
     case WM_SIZE:
     {
-      printf("Size of window changed");
+      OutputDebugStringA("Size of window changed");
       result = 0;
+    } break;
+    case WM_PAINT:
+    {
+      OutputDebugStringA("Need to paint window.\n");
+      result = 0;
+    } break;
+    // TODO: Handle closed window
+    default:
+    {
+      result = DefWindowProcA(handle, msg, wparam, lparam);
     }
   }
   
@@ -54,11 +64,11 @@ b8 Platform::Init(PlatformState* s, const char* applicationName, i32 x, i32 y, i
 
 
   // Register window class with OS
-  RegisterClass(&wc);
+  i32 result = RegisterClassA(&wc);
 
   // Create Window from WNDCLASS
   HWND hwnd = CreateWindowExA(
-    NULL,
+    0,
     wc.lpszClassName,
     applicationName,
     WS_OVERLAPPEDWINDOW,
@@ -76,18 +86,28 @@ b8 Platform::Init(PlatformState* s, const char* applicationName, i32 x, i32 y, i
   if (hwnd == NULL)
   {
     // TODO: Handle hwnd creation failure
-    // Failed to create window
-    printf("Failed to create window.\n");
-    return 0;
+    
+    // Get Error Code and Message
+    // TODO: Move to GetError utility function
+    DWORD errorCode = GetLastError();
+    LPVOID msgBuffer;
+    FormatMessage(
+      FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+      FORMAT_MESSAGE_FROM_SYSTEM |
+      FORMAT_MESSAGE_IGNORE_INSERTS,
+      NULL,
+      errorCode,
+      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+      (LPTSTR) &msgBuffer,
+      0, 
+      NULL 
+    );
+
+    OutputDebugStringA((LPCSTR)msgBuffer);
+    return (b8)1;
   }
 
-  b8 showResult = ShowWindow(hwnd, SW_SHOW);
-  if(!showResult)
-  {
-    // TODO: Handle failed display 
-    printf("Failed to show window.\n");
-    return 0;
-  }
+  ShowWindow(hwnd, SW_SHOW);
 
   // Everything initiated successfully, so set our state
   WindowsState* ws = (WindowsState*)malloc(sizeof(WindowsState));

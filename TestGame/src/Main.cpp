@@ -1,5 +1,3 @@
-#define SDL_MAIN_HANDLED
-#include <stdio.h>
 #include <Math/Math.hpp>
 #include <Platform/Platform.hpp>
 #include <Utils/Defines.h>
@@ -13,6 +11,7 @@
 int WINAPI WinMain(HINSTANCE handle, HINSTANCE prevHandle, PSTR args, int displayMode)
 {
   OutputDebugStringA("Windows is working\n");
+  int s = sizeof(LPVOID);
 
   Platform p;
 

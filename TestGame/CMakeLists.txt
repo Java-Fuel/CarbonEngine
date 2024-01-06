@@ -5,6 +5,8 @@ set(target TestGame)
 set(target_version 0.0.1)
 set(platform WIN32)
 
+project(TestGame)
+
 # Get Source Files 
 file(GLOB src_files src/*.cpp)
 message(src_files = "${src_files}")
@@ -28,6 +30,15 @@ target_link_libraries(${target} Engine)
 set(TARGET ${target} PROPERTIES
     VERSION ${target_version}
 )
+
+if (WIN32)
+# copy the .dll file to the same folder as the executable
+add_custom_command(
+    TARGET ${target} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    $<TARGET_FILE_DIR:Engine>
+    $<TARGET_FILE_DIR:${target})
+endif()
 
 # Install target
 install(TARGETS ${target} RUNTIME)

@@ -14,4 +14,15 @@ include_directories(${ENGINE_INCLUDES_DIR})
 # Create Engine
 add_library(${target} SHARED ${src} ${headers} ${headers_pp})
 
+set_target_properties(${target} PROPERTIES
+  LANGUAGES CXX
+  VERSION 0.0.1
+  SOVERSION 0.0.1
+  PUBLIC_HEADER "${headers_pp}"
+)
 
+install(TARGETS ${target}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}  COMPONENT Library
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
