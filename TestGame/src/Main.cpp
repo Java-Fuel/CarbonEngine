@@ -28,9 +28,12 @@ int WINAPI WinMain(HINSTANCE handle, HINSTANCE prevHandle, PSTR args, int displa
   // Get HWND
   HWND hwnd = (HWND)state.state;
 
+  // ShowWindow(hwnd, SW_SHOW);
+  // UpdateWindow(hwnd);
+
   // Listen for messages
   MSG msg = {};
-  while(GetMessage(&msg, hwnd, 0, 0));
+  while(GetMessage(&msg, NULL, 0, 0) != FALSE)
   {
     TranslateMessage(&msg);
     DispatchMessage(&msg);

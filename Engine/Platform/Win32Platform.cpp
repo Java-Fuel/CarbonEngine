@@ -35,11 +35,33 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_PAINT:
     {
       OutputDebugStringA("Need to paint window.\n");
+
+      PAINTSTRUCT ps;
+      HDC deviceContext = BeginPaint(handle, &ps);
+
+      HBRUSH brush = CreateSolidBrush(0x00000000);
+      FillRect(deviceContext, &ps.rcPaint, brush);
+
+      EndPaint(handle, &ps);
+
+      result = 0;
+    } break;
+    case WM_CLOSE:
+    {
+      OutputDebugStringA("Closing window...\n");
+      DestroyWindow(handle); // TODO: Can fail, need to handle error scenario
+      result = 0;
+    } break;
+    case WM_DESTROY:
+    {
+      OutputDebugStringA("Destroying window...\n");
+      PostQuitMessage(0);
       result = 0;
     } break;
     // TODO: Handle closed window
     default:
     {
+      OutputDebugStringA("Handling msg with default method.\n");
       result = DefWindowProcA(handle, msg, wparam, lparam);
     }
   }
@@ -68,7 +90,7 @@ b8 Platform::Init(PlatformState* s, const char* applicationName, i32 x, i32 y, i
 
   // Create Window from WNDCLASS
   HWND hwnd = CreateWindowExA(
-    0,
+    WS_EX_OVERLAPPEDWINDOW,
     wc.lpszClassName,
     applicationName,
     WS_OVERLAPPEDWINDOW,
@@ -108,6 +130,7 @@ b8 Platform::Init(PlatformState* s, const char* applicationName, i32 x, i32 y, i
   }
 
   ShowWindow(hwnd, SW_SHOW);
+  UpdateWindow(hwnd);
 
   // Everything initiated successfully, so set our state
   WindowsState* ws = (WindowsState*)malloc(sizeof(WindowsState));
