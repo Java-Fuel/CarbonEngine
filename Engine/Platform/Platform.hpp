@@ -19,6 +19,21 @@ struct PlatformState {
   void* state;
 };
 
+/**
+ * Holds data related to the platform and windowing system
+*/
+struct PlatformContext {
+  void* state;
+};
+
+/**
+ * Holds event and event data emitted by the platform OS
+*/
+struct PlatformEvent {
+  i32 eventCode;
+  void* data;
+};
+
 
 class Platform {
 
@@ -35,12 +50,23 @@ class Platform {
     */
     b8 Init(PlatformState* s, const char* applicationName, i32 x, i32 y, i32 width, i32 height);
 
+    /* V2 */
+    // Initialize the platform 
+    b8 Initialize(PlatformContext* context, const char* applicationName, i32 x, i32 y, i32 width, i32 height);
+    // Display Window on system
+    b8 DisplayWindow(PlatformContext* context);
+    // Get Error message for errorCode from system
+    char* GetErrorMessage(i32 errorCode);
     /**
      * @brief Initiate platform shutdown by cleaning up any resources
      * @param s pointer to platform data to cleanup
      * @return 0 on successful cleanup, error number greater than zero on failed cleanup
     */
     b8 Shutdown(PlatformState* s);
+    // Allocate memory on the platform
+    void* Allocate(i32 size);
+    // deallocate memory on the platform
+    void Deallocate(void* data);
 
 };
 
