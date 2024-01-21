@@ -7,67 +7,55 @@
 
 /**
  * Defines the standard interface for interacting with different
- * platforms. 
-*/
+ * platforms.
+ */
 
 #include <stdio.h>
 
-/**
- * Keeps track of all platform data for game engine
-*/
-struct PlatformState {
-  void* state;
-};
 
 /**
  * Holds data related to the platform and windowing system
-*/
-struct PlatformContext {
-  void* state;
+ */
+struct PlatformContext
+{
+    void *state;
+    i32 windowX;
+    i32 windowY;
+    i32 windowWidth;
+    i32 windowHeight;
+    const char* applicationName;
 };
 
-/**
- * Holds event and event data emitted by the platform OS
-*/
-struct PlatformEvent {
-  i32 eventCode;
-  void* data;
-};
+class Platform
+{
 
+public:
 
-class Platform {
-
-  public:
     /**
-     * @brief Initialize the platform by creating an application window
-     * @param s a pointer to a PlatformState object used to keep track of all necessary platform data
+     * Initialize the platform by creating an application window
+     * @param context The PlatformContext to be initialized
      * @param applicationName name of the application window
      * @param x the X coordinate to create window
-     * @param y the Y coordinate to create the window
+     * @param y the Y coordinate to create the windog
      * @param width the starting width of the window
      * @param height the starting height of the window
      * @return 0 on successful initialization, error number greater than zero on failed init
-    */
-    b8 Init(PlatformState* s, const char* applicationName, i32 x, i32 y, i32 width, i32 height);
-
-    /* V2 */
-    // Initialize the platform 
-    b8 Initialize(PlatformContext* context, const char* applicationName, i32 x, i32 y, i32 width, i32 height);
-    // Display Window on system
-    b8 DisplayWindow(PlatformContext* context);
-    // Get Error message for errorCode from system
-    char* GetErrorMessage(i32 errorCode);
+     */
+    b8 Initialize(PlatformContext* context, const char *applicationName, i32 x, i32 y, i32 width, i32 height);
+    
     /**
-     * @brief Initiate platform shutdown by cleaning up any resources
-     * @param s pointer to platform data to cleanup
-     * @return 0 on successful cleanup, error number greater than zero on failed cleanup
-    */
-    b8 Shutdown(PlatformState* s);
-    // Allocate memory on the platform
-    void* Allocate(i32 size);
-    // deallocate memory on the platform
-    void Deallocate(void* data);
+     * Create a window on the current platform.
+     * @param context The current PlatformContext that contains all necessary configuration information.
+     * @return success or error status code
+     */
+    b8 CreateWin(PlatformContext* context);
 
+    /**
+     * Pull events, such as input events, window events, etc., from the platform operating.
+     * @param context The platform context
+     * @return success or error code
+     */
+    b8 PollEvents(PlatformContext *context);
 };
 
 #endif

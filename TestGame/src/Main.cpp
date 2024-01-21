@@ -3,51 +3,42 @@
 #include <Utils/Defines.h>
 
 // Windows Entry Point
-# if _WIN32
+#if _WIN32
 
 #include <windows.h>
 #include <Debugapi.h>
 
 int WINAPI WinMain(HINSTANCE handle, HINSTANCE prevHandle, PSTR args, int displayMode)
 {
-  OutputDebugStringA("Windows is working\n");
-  int s = sizeof(LPVOID);
 
-  Platform p;
+    Platform p;    
+    PlatformContext context = {};
 
-  PlatformState state = {};
+    b8 init = p.Initialize(&context, "Test Game", 500, 500, 500, 500);
+    if(init > 0) // Initialization Failure
+    {
+        OutputDebugStringA("Could not initialize the Windows platform layer!\n");
+        return 1;
+    }
 
-  b8 init = p.Init(&state, "TestGame", 500, 500, 500, 500);
+    b8 createWin = p.CreateWin(&context);
+    if (createWin > 0) // Window Creation Failure)
+    {
+        OutputDebugStringA("Could not create window!\n");
+        return 1;
+    }
+	
+    p.PollEvents(&context);
 
-  if (init)
-  {
-    OutputDebugStringA("Failed to initialize window.\n");
-    return 1;
-  }
-
-  // Get HWND
-  HWND hwnd = (HWND)state.state;
-
-  // ShowWindow(hwnd, SW_SHOW);
-  // UpdateWindow(hwnd);
-
-  // Listen for messages
-  MSG msg = {};
-  while(GetMessage(&msg, NULL, 0, 0) != FALSE)
-  {
-    TranslateMessage(&msg);
-    DispatchMessage(&msg);
-  }
-
-  return 0;
+    return 0;
 }
 
 #else
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-  printf("Hello Carbon");
-  return 0;
+    printf("Hello Carbon");
+    return 0;
 }
 
-#endif 
+#endif
