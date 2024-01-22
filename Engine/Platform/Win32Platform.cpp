@@ -5,6 +5,16 @@
 #include <windows.h>
 #include "Win32Platform.h"
 
+// TODO: Refactor Globals
+/* Global Variable */
+static BITMAPINFO BitMapInfo;
+static i32 BytesPerPixel = 4;
+static void* BackBuffer;
+static u32 BitmapWidth = 500;
+static u32 BitmapHeight = 500;
+
+
+/* Private Method Prototypes */
 
 /**
  * @brief Windows Callback function to respond to Windows events
@@ -14,6 +24,17 @@
  * @param lparam additional message information (depends on msg value)
  */
 LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam);
+
+/**
+ * Resize the Device Independent Bitman (DIB) provided by Windows platform
+ */
+void ResizeBackbuffer(i32 newWidth, i32 newHeight);
+
+/**
+ * Update window with new data that was moved into back buffer
+ * Note: This is like executing a render call
+ */
+void DrawBuffer(HWND window, HDC deviceContext, RECT* windowRect);
 
 /* Platform.hpp Implementation */
 b8 Platform::Initialize(PlatformContext* context, const char* applicationName, i32 x, i32 y, i32 width, i32 height)
@@ -123,6 +144,9 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_SIZE:
     {
         OutputDebugStringA("Size of window changed");
+        u32 width = (u32)LOWORD(lparam);
+        u32 height = (u32)HIWORD(lparam);
+        ResizeBackbuffer(width, height);
         result = 0;
     }
     break;
@@ -132,9 +156,9 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
 
         PAINTSTRUCT ps;
         HDC deviceContext = BeginPaint(handle, &ps);
-
-        HBRUSH brush = CreateSolidBrush(0x00000000);
-        FillRect(deviceContext, &ps.rcPaint, brush);
+        RECT windowRect;
+        GetClientRect(handle, &windowRect);
+        DrawBuffer(handle, deviceContext, &windowRect); 
 
         EndPaint(handle, &ps);
 
@@ -183,5 +207,75 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     return result;
 }
 
+void ResizeBackbuffer(i32 newWidth, i32 newHeight)
+{
+    // TODO: Release old buffer (going to mem leak)
+    
+    // Create new BitMapInfo
+    BitMapInfo = {};
+    BitMapInfo.bmiHeader.biSize = sizeof(BitMapInfo.bmiHeader);
+    BitMapInfo.bmiHeader.biWidth = newWidth;
+    BitMapInfo.bmiHeader.biHeight = -newHeight;
+    BitMapInfo.bmiHeader.biPlanes = 1;
+    BitMapInfo.bmiHeader.biBitCount = 32; // RGBa 8 bits * 4 values giving us (0-255, 0-255, 0-255, 0-255)
+    BitMapInfo.bmiHeader.biCompression = BI_RGB;
+
+
+    // Allocate new back buffer
+    i32 backBufferSize = (newWidth * newHeight) * BytesPerPixel;
+    BackBuffer = (u8*)VirtualAlloc(NULL, backBufferSize, MEM_COMMIT, PAGE_READWRITE);
+    BitmapWidth = newWidth;
+    BitmapHeight = newHeight;
+    
+    // Draw to buffer
+    u32 stride = BitmapWidth * BytesPerPixel;
+    u8* row = (u8*)BackBuffer;
+    for(u32 Y = 0; Y < BitmapHeight; ++Y)
+    {   
+        // Row of Pixel
+        u8* pixel = row;
+        for(u32 X = 0; X < BitmapWidth; ++X)
+        {
+            // Set Blue
+            *pixel = 0;
+            ++pixel;
+
+            // Set Green
+            *pixel = 0;
+            ++pixel;
+
+            // Set Red
+            *pixel = 255;
+            ++pixel;
+
+            // Set Alpha
+            *pixel = 0;
+            ++pixel;
+        }
+        row += stride;
+    }
+}
+
+void DrawBuffer(HWND window, HDC deviceContext, RECT* windowRect)
+{
+    u32 windowWidth = windowRect->right - windowRect->left;
+    u32 windowHeight = windowRect->bottom - windowRect->top;
+    StretchDIBits(
+        deviceContext,
+        0,
+        0, 
+        windowWidth,
+        windowHeight,
+        0,
+        0,
+         BitmapWidth,
+        BitmapHeight,
+        BackBuffer,
+        &BitMapInfo,
+        DIB_RGB_COLORS,
+        SRCCOPY
+    );
+
+}
 
 #endif
