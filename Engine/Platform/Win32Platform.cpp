@@ -34,7 +34,7 @@ void ResizeBackbuffer(i32 newWidth, i32 newHeight);
  * Update window with new data that was moved into back buffer
  * Note: This is like executing a render call
  */
-void DrawBuffer(HWND window, HDC deviceContext, RECT* windowRect);
+void DrawBuffer(HWND window, RECT* windowRect);
 
 /* Platform.hpp Implementation */
 b8 Platform::Initialize(PlatformContext* context, const char* applicationName, i32 x, i32 y, i32 width, i32 height)
@@ -153,15 +153,9 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     case WM_PAINT:
     {
         OutputDebugStringA("Need to paint window.\n");
-
-        PAINTSTRUCT ps;
-        HDC deviceContext = BeginPaint(handle, &ps);
         RECT windowRect;
         GetClientRect(handle, &windowRect);
-        DrawBuffer(handle, deviceContext, &windowRect); 
-
-        EndPaint(handle, &ps);
-
+        DrawBuffer(handle, &windowRect); 
         result = 0;
     }
     break;
@@ -256,12 +250,13 @@ void ResizeBackbuffer(i32 newWidth, i32 newHeight)
     }
 }
 
-void DrawBuffer(HWND window, HDC deviceContext, RECT* windowRect)
+void DrawBuffer(HWND window, RECT* windowRect)
 {
     u32 windowWidth = windowRect->right - windowRect->left;
     u32 windowHeight = windowRect->bottom - windowRect->top;
+    HDC context = GetDC(window);
     StretchDIBits(
-        deviceContext,
+        context,
         0,
         0, 
         windowWidth,
