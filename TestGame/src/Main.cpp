@@ -8,30 +8,43 @@
 #include <windows.h>
 #include <Debugapi.h>
 
+u8* RenderRed(PlatformContext* context)
+{
+    i32 width = context->windowWidth;
+    i32 height = context->windowHeight;
+
+    return 0;
+}
+
 int WINAPI WinMain(HINSTANCE handle, HINSTANCE prevHandle, PSTR args, int displayMode)
 {
 
-    Platform p;    
-    PlatformContext context = {};
+    Win32Platform p = Win32Platform::instance(); 
 
-    b8 init = p.Initialize(&context, "Test Game", 500, 500, 500, 500);
-    if(init > 0) // Initialization Failure
+    b8 init = p.Initialize("Test Game", 500, 500, 500, 500);
+    if(init) // Initialization Failure
     {
         OutputDebugStringA("Could not initialize the Windows platform layer!\n");
         return 1;
     }
 
-    b8 createWin = p.CreateWin(&context);
-    if (createWin > 0) // Window Creation Failure)
+    b8 createWin = p.CreateWin();
+    if (createWin) // Window Creation Failure)
     {
         OutputDebugStringA("Could not create window!\n");
         return 1;
     }
-	
-    p.PollEvents(&context);
+    
+    u8 running = true;
+    while (running)
+    {
+        running = p.PollEvents();
+        
+    }
 
     return 0;
 }
+
 
 #else
 

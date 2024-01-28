@@ -1,20 +1,14 @@
-#include "Platform.hpp"
-
-#if ENGINE_PLATFORM == WIN32
+#include "Win32Platform.h"
 
 #include <windows.h>
 #include "Win32Platform.h"
 
 // TODO: Refactor Globals
-/* Global Variable */
-static BITMAPINFO BitMapInfo;
-static i32 BytesPerPixel = 4;
-static void* BackBuffer;
-static u32 BitmapWidth = 500;
-static u32 BitmapHeight = 500;
-
-
-/* Private Method Prototypes */
+// static bitMapInfo bitMapInfo;
+// static i32 BytesPerPixel = 4;
+// static void* BackBuffer;
+// static u32 BitmapWidth = 500;
+// static u32 BitmapHeight = 500;
 
 /**
  * @brief Windows Callback function to respond to Windows events
@@ -25,30 +19,21 @@ static u32 BitmapHeight = 500;
  */
 LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam);
 
-/**
- * Resize the Device Independent Bitman (DIB) provided by Windows platform
- */
-void ResizeBackbuffer(i32 newWidth, i32 newHeight);
-
-/**
- * Update window with new data that was moved into back buffer
- * Note: This is like executing a render call
- */
-void DrawBuffer(HWND window, RECT* windowRect);
 
 /* Platform.hpp Implementation */
-b8 Platform::Initialize(PlatformContext* context, const char* applicationName, i32 x, i32 y, i32 width, i32 height)
+
+b8 Win32Platform::Win32Init(const char* applicationName, i32 x, i32 y, i32 width, i32 height)
 {   
-    context->windowWidth = width;
-    context->windowHeight = height;
-    context->windowX = x;
-    context->windowY = y;
-    context->applicationName = applicationName;
+    windowWidth = width;
+    windowHeight = height;
+    windowX = x;
+    windowY = y;
+    applicationName = applicationName;
     
     return 0;
 }
 
-b8 Platform::CreateWin(PlatformContext* context)
+b8 Win32Platform::Win32CreateWindow()
 {
     // Get Handle to application instance
     HINSTANCE hinstance = (HINSTANCE)GetModuleHandleA(0);
@@ -70,12 +55,12 @@ b8 Platform::CreateWin(PlatformContext* context)
     HWND hwnd = CreateWindowExA(
         WS_EX_OVERLAPPEDWINDOW,
         wc.lpszClassName,
-        context->applicationName,
+        applicationName,
         WS_OVERLAPPEDWINDOW,
-        context->windowX,
-        context->windowY,
-        context->windowWidth,
-        context->windowHeight,
+        windowX,
+        windowY,
+        windowWidth,
+        windowHeight,
         NULL,
         NULL,
         wc.hInstance,
@@ -109,31 +94,40 @@ b8 Platform::CreateWin(PlatformContext* context)
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
 
-    // Everything initiated successfully, so set our state
-    // TODO: Switch to platform specific memory allocation instead of malloc
-    Win32State *ws = (Win32State *)malloc(sizeof(Win32State));
-    ws->hwnd = hwnd;
-    context->state = ws;
+    windowHandle = hwnd;
 
     return 0;
 }
 
-b8 Platform::PollEvents(PlatformContext *context)
+b8 Win32Platform::Win32PollEvents()
 {
     MSG msg = {};
 
-    while (GetMessage(&msg, NULL, 0, 0))
+    while (PeekMessageA(&msg, 0, 0, 0, PM_REMOVE))
     {
+        if (msg.message == WM_QUIT)
+        {
+            return 0;
+        }
+
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 
-    return 0;
+    return 1;
+}
+
+void Win32Platform::Win32Draw(u8* buffer, u32 bufferWidth, u32 bufferHeight)
+{
+    RECT windowRect;
+    GetClientRect(windowHandle, &windowRect);
+    DrawBuffer(&windowRect);
 }
 
 
 
 /* Private Methods */
+
 LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 
@@ -146,16 +140,7 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
         OutputDebugStringA("Size of window changed");
         u32 width = (u32)LOWORD(lparam);
         u32 height = (u32)HIWORD(lparam);
-        ResizeBackbuffer(width, height);
-        result = 0;
-    }
-    break;
-    case WM_PAINT:
-    {
-        OutputDebugStringA("Need to paint window.\n");
-        RECT windowRect;
-        GetClientRect(handle, &windowRect);
-        DrawBuffer(handle, &windowRect); 
+        ResizeBackbuffer(width, height); // TODO: Needs to be solved with an event system 
         result = 0;
     }
     break;
@@ -201,34 +186,35 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     return result;
 }
 
-void ResizeBackbuffer(i32 newWidth, i32 newHeight)
+void Win32Platform::ResizeBackbuffer(i32 newWidth, i32 newHeight)
 {
     // TODO: Release old buffer (going to mem leak)
+    // MEMORY LEAKING LIKE CRAZY
     
-    // Create new BitMapInfo
-    BitMapInfo = {};
-    BitMapInfo.bmiHeader.biSize = sizeof(BitMapInfo.bmiHeader);
-    BitMapInfo.bmiHeader.biWidth = newWidth;
-    BitMapInfo.bmiHeader.biHeight = -newHeight;
-    BitMapInfo.bmiHeader.biPlanes = 1;
-    BitMapInfo.bmiHeader.biBitCount = 32; // RGBa 8 bits * 4 values giving us (0-255, 0-255, 0-255, 0-255)
-    BitMapInfo.bmiHeader.biCompression = BI_RGB;
+    // Create new bitMapInfo
+    bitMapInfo = {};
+    bitMapInfo.bmiHeader.biSize = sizeof(bitMapInfo.bmiHeader);
+    bitMapInfo.bmiHeader.biWidth = newWidth;
+    bitMapInfo.bmiHeader.biHeight = -newHeight;
+    bitMapInfo.bmiHeader.biPlanes = 1;
+    bitMapInfo.bmiHeader.biBitCount = 32; // RGBa 8 bits * 4 values giving us (0-255, 0-255, 0-255, 0-255)
+    bitMapInfo.bmiHeader.biCompression = BI_RGB;
 
 
     // Allocate new back buffer
-    i32 backBufferSize = (newWidth * newHeight) * BytesPerPixel;
-    BackBuffer = (u8*)VirtualAlloc(NULL, backBufferSize, MEM_COMMIT, PAGE_READWRITE);
-    BitmapWidth = newWidth;
-    BitmapHeight = newHeight;
+    i32 backBufferSize = (newWidth * newHeight) * bytesPerPixel;
+    backBuffer = (u8*)VirtualAlloc(NULL, backBufferSize, MEM_COMMIT, PAGE_READWRITE);
+    bufferWidth = newWidth;
+    bufferHeight = newHeight;
     
     // Draw to buffer
-    u32 stride = BitmapWidth * BytesPerPixel;
-    u8* row = (u8*)BackBuffer;
-    for(u32 Y = 0; Y < BitmapHeight; ++Y)
+    u32 stride = bufferWidth * bytesPerPixel;
+    u8* row = (u8*)backBuffer;
+    for(u32 Y = 0; Y < bufferHeight; ++Y)
     {   
         // Row of Pixel
         u8* pixel = row;
-        for(u32 X = 0; X < BitmapWidth; ++X)
+        for(u32 X = 0; X < bufferWidth; ++X)
         {
             // Set Blue
             *pixel = 0;
@@ -250,11 +236,11 @@ void ResizeBackbuffer(i32 newWidth, i32 newHeight)
     }
 }
 
-void DrawBuffer(HWND window, RECT* windowRect)
+void Win32Platform::DrawBuffer(RECT* windowRect)
 {
     u32 windowWidth = windowRect->right - windowRect->left;
     u32 windowHeight = windowRect->bottom - windowRect->top;
-    HDC context = GetDC(window);
+    HDC context = GetDC(windowHandle);
     StretchDIBits(
         context,
         0,
@@ -263,14 +249,12 @@ void DrawBuffer(HWND window, RECT* windowRect)
         windowHeight,
         0,
         0,
-         BitmapWidth,
-        BitmapHeight,
-        BackBuffer,
-        &BitMapInfo,
+        bufferWidth,
+        bufferHeight,
+        backBuffer,
+        &bitMapInfo,
         DIB_RGB_COLORS,
         SRCCOPY
     );
-
+    ReleaseDC(windowHandle, context);
 }
-
-#endif
