@@ -1,5 +1,5 @@
 #include <Math/Math.hpp>
-#include <Platform/Platform.hpp>
+#include <Platform/Win32Platform.h>
 #include <Utils/Defines.h>
 
 // Windows Entry Point
@@ -8,27 +8,20 @@
 #include <windows.h>
 #include <Debugapi.h>
 
-u8* RenderRed(PlatformContext* context)
-{
-    i32 width = context->windowWidth;
-    i32 height = context->windowHeight;
-
-    return 0;
-}
 
 int WINAPI WinMain(HINSTANCE handle, HINSTANCE prevHandle, PSTR args, int displayMode)
 {
 
-    Win32Platform p = Win32Platform::instance(); 
+    Win32Platform p = Win32Platform(); 
 
-    b8 init = p.Initialize("Test Game", 500, 500, 500, 500);
+    b8 init = p.Win32Init("Test Game", 500, 500, 500, 500);
     if(init) // Initialization Failure
     {
         OutputDebugStringA("Could not initialize the Windows platform layer!\n");
         return 1;
     }
 
-    b8 createWin = p.CreateWin();
+    b8 createWin = p.Win32CreateWindow();
     if (createWin) // Window Creation Failure)
     {
         OutputDebugStringA("Could not create window!\n");
@@ -38,7 +31,7 @@ int WINAPI WinMain(HINSTANCE handle, HINSTANCE prevHandle, PSTR args, int displa
     u8 running = true;
     while (running)
     {
-        running = p.PollEvents();
+        running = p.Win32PollEvents();
         
     }
 

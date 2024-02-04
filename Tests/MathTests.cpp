@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "Platform/Platform.hpp"
+#include "Platform/Win32Platform.h"
 
 TEST(FakeTest, TestingFakeTestsWork)
 {

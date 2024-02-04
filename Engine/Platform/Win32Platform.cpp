@@ -3,7 +3,7 @@
 #include <windows.h>
 #include "Win32Platform.h"
 
-// TODO: Refactor Globals
+
 // static bitMapInfo bitMapInfo;
 // static i32 BytesPerPixel = 4;
 // static void* BackBuffer;
@@ -140,7 +140,7 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
         OutputDebugStringA("Size of window changed");
         u32 width = (u32)LOWORD(lparam);
         u32 height = (u32)HIWORD(lparam);
-        ResizeBackbuffer(width, height); // TODO: Needs to be solved with an event system 
+        //ResizeBackbuffer(width, height); // TODO: Needs to be solved with an event system 
         result = 0;
     }
     break;
