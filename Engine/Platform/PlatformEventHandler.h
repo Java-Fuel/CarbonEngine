@@ -10,8 +10,8 @@
 
 struct PlatformEventArgs
 {
-    u32 first;
-    u32 second;
+    i32 first;
+    i32 second;
 };
 
 class IPlatformEventHandler 

@@ -59,9 +59,8 @@ public:
 
     /**
      * Draw buffer to the display
-     * @param buffer The buffer data to draw to the screen
      */
-    void Win32Draw(u8* buffer, u32 bufferWidth, u32 bufferHeight);
+    void Win32Draw();
 
     void ResizeWindowHandler(PlatformEventArgs* args);
 

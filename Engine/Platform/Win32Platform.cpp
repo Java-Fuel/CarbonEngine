@@ -3,12 +3,6 @@
 #include "Platform/PlatformEventManager.h"
 
 
-// static bitMapInfo bitMapInfo;
-// static i32 BytesPerPixel = 4;
-// static void* BackBuffer;
-// static u32 BitmapWidth = 500;
-// static u32 BitmapHeight = 500;
-
 /**
  * @brief Windows Callback function to respond to Windows events
  * @param handle a handle to the window where event occurred
@@ -28,9 +22,10 @@ b8 Win32Platform::Win32Init(const char* applicationName, i32 x, i32 y, i32 width
     windowX = x;
     windowY = y;
     applicationName = applicationName;
+    bytesPerPixel = 4;
 
-    PlatformEventManager current = PlatformEventManager::current();
-    current.subscribe(PlatformEventType::WINDOW_RESIZE, new PlatformEventHandler<Win32Platform>(this, &Win32Platform::ResizeWindowHandler));
+    PlatformEventManager* current = PlatformEventManager::current();
+    current->subscribe(PlatformEventType::WINDOW_RESIZE, new PlatformEventHandler<Win32Platform>(this, &Win32Platform::ResizeWindowHandler));
     
     return 0;
 }
@@ -39,6 +34,9 @@ b8 Win32Platform::Win32CreateWindow()
 {
     // Get Handle to application instance
     HINSTANCE hinstance = (HINSTANCE)GetModuleHandleA(0);
+
+    PlatformEventManager* current = PlatformEventManager::current();
+
 
     // Define Window Class Name
     const char *windowClassName = "carbon_window_class";
@@ -119,7 +117,7 @@ b8 Win32Platform::Win32PollEvents()
     return 1;
 }
 
-void Win32Platform::Win32Draw(u8* buffer, u32 bufferWidth, u32 bufferHeight)
+void Win32Platform::Win32Draw()
 {
     RECT windowRect;
     GetClientRect(windowHandle, &windowRect);
@@ -128,9 +126,12 @@ void Win32Platform::Win32Draw(u8* buffer, u32 bufferWidth, u32 bufferHeight)
 
 void Win32Platform::ResizeWindowHandler(PlatformEventArgs* args)
 {
-    u32 width = args->first;
-    u32 height = args->second;
+    i32 width = args->first;
+    i32 height = args->second;
     u32 i = 9;
+
+    ResizeBackbuffer(width, height);
+    Win32Draw();
 }
 
 
@@ -145,18 +146,19 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     {
     case WM_SIZE:
     {
-        OutputDebugStringA("Size of window changed");
-        u32 width = (u32)LOWORD(lparam);
-        u32 height = (u32)HIWORD(lparam);
+        i32 width = (i32)LOWORD(lparam);
+        i32 height = (i32)HIWORD(lparam);
+        PlatformEventManager::current()->publishEvent(PlatformEventType::WINDOW_RESIZE, new PlatformEventArgs{width, height});
         result = 0;
     }
     break;
     case WM_CLOSE:
     {
         OutputDebugStringA("Closing window...\n");
-        BOOL r = DestroyWindow(handle); // TODO: Can fail, need to handle error scenario
+        BOOL r = DestroyWindow(handle);
         if (r)
         {
+            // TODO: Move to logging system
             DWORD errorCode = GetLastError();
             LPVOID msgBuffer;
             FormatMessage(

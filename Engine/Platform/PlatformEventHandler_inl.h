@@ -11,6 +11,7 @@ void PlatformEventHandler<T>::publish(PlatformEventArgs* args)
 {
     // TODO: Implement Me!
     OutputDebugStringA("Publishing Event!\n");
+    m_exec(args);
 }
 
 template<typename T>
@@ -18,4 +19,5 @@ void PlatformEventHandler<T>::m_exec(PlatformEventArgs* args)
 {
     // TODO: Implement Me!
     OutputDebugStringA("Executing event in instance function pointer!\n");
+    ((*instance).*callback)(args);
 }

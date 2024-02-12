@@ -28,11 +28,12 @@ class PlatformEventManager
         void unsubscribe(); // TODO: Need to implement
         void publishEvent(PlatformEventType eventType, PlatformEventArgs* args);
         
-        static PlatformEventManager& current();
+        static PlatformEventManager* current();
 
     protected:
         PlatformEventManager() = default;
     private:
+        std::vector<IPlatformEventHandler*>* m_getSubscribers(PlatformEventType eventType);
 };
 
 // #include "PlatformEventManager_inl.h"
