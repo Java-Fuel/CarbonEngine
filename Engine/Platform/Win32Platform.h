@@ -5,13 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include "PlatformEventManager.h"
 
 /**
  * Defines the standard interface for interacting with different
  * platforms.
  */
-
-#include <stdio.h>
 
 class Win32Platform
 {
@@ -28,6 +27,7 @@ public:
     u8* backBuffer;
     u8 bytesPerPixel;
     BITMAPINFO bitMapInfo;
+    
 
 public:
     
@@ -62,6 +62,8 @@ public:
      * @param buffer The buffer data to draw to the screen
      */
     void Win32Draw(u8* buffer, u32 bufferWidth, u32 bufferHeight);
+
+    void ResizeWindowHandler(PlatformEventArgs* args);
 
 private:
     /**

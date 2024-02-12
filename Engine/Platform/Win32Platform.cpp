@@ -1,7 +1,6 @@
-#include "Win32Platform.h"
-
 #include <windows.h>
 #include "Win32Platform.h"
+#include "Platform/PlatformEventManager.h"
 
 
 // static bitMapInfo bitMapInfo;
@@ -29,6 +28,9 @@ b8 Win32Platform::Win32Init(const char* applicationName, i32 x, i32 y, i32 width
     windowX = x;
     windowY = y;
     applicationName = applicationName;
+
+    PlatformEventManager current = PlatformEventManager::current();
+    current.subscribe(PlatformEventType::WINDOW_RESIZE, new PlatformEventHandler<Win32Platform>(this, &Win32Platform::ResizeWindowHandler));
     
     return 0;
 }
@@ -124,6 +126,12 @@ void Win32Platform::Win32Draw(u8* buffer, u32 bufferWidth, u32 bufferHeight)
     DrawBuffer(&windowRect);
 }
 
+void Win32Platform::ResizeWindowHandler(PlatformEventArgs* args)
+{
+    u32 width = args->first;
+    u32 height = args->second;
+    u32 i = 9;
+}
 
 
 /* Private Methods */
@@ -140,7 +148,6 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
         OutputDebugStringA("Size of window changed");
         u32 width = (u32)LOWORD(lparam);
         u32 height = (u32)HIWORD(lparam);
-        //ResizeBackbuffer(width, height); // TODO: Needs to be solved with an event system 
         result = 0;
     }
     break;

@@ -1,5 +1,6 @@
 #include <Math/Math.hpp>
 #include <Platform/Win32Platform.h>
+#include "Platform/PlatformEventManager.h"
 #include <Utils/Defines.h>
 
 // Windows Entry Point
@@ -7,6 +8,14 @@
 
 #include <windows.h>
 #include <Debugapi.h>
+
+void WindowResizeHandler(PlatformEventArgs* args)
+{
+    const char* output1 = STR("width: ", args->first);
+    const char* output2 = STR("height: ", args->second);
+    OutputDebugStringA(output1);
+    OutputDebugStringA(output2);
+}
 
 
 int WINAPI WinMain(HINSTANCE handle, HINSTANCE prevHandle, PSTR args, int displayMode)

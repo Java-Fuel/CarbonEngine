@@ -24,6 +24,10 @@ typedef uint8_t b8; // Unsigned
 typedef float f32;
 typedef double f64;
 
+
+// Macro functions
+#define STR(...) # __VA_ARGS__
+
 // Platform Definitions
 #define WIN32 1
 
