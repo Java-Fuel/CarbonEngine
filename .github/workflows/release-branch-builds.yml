@@ -4,9 +4,9 @@ name: Build & Test
 
 on:
   push:
-    branches: [ "release/*" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "release/*" ]
+    branches: [ "main" ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
