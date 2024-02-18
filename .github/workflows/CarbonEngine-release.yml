@@ -33,11 +33,6 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - name: Pack Installer
-      run: cpack 
-      shell: bash
-      working-directory: ./build
-
     - name: Move Version File
       run: mv ./version.txt ./build/Game/version.txt
 
@@ -45,7 +40,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: CarbonEngine
-        path: build/Game/*
+        path: bin/release/*
 
   release:
     if: contains( 'refs/heads/main', github.ref)
