@@ -95,7 +95,7 @@ b8 Win32Platform::Win32CreateWindow()
     UpdateWindow(hwnd);
 
     windowHandle = hwnd;
-
+    Win32Draw();
     return 0;
 }
 
