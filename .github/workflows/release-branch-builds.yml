@@ -34,7 +34,7 @@ jobs:
 
     - name: List Bin
       run: ls bin/
-
+      
     - name: Test
       working-directory: ${{github.workspace}}/build
       # Execute tests defined by the CMake configuration.
