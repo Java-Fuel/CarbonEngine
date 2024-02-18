@@ -5,8 +5,6 @@ name: CarbonEngine Build
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -34,13 +32,13 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Move Version File
-      run: mv ./version.txt ./build/Game/version.txt
+      run: mv ./version.txt ./bin/Release
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: CarbonEngine
-        path: bin/release/*
+        path: bin/Release/*
 
   release:
     if: contains( 'refs/heads/main', github.ref)
