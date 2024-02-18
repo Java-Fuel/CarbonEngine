@@ -33,7 +33,7 @@ jobs:
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
     - name: Check Bin
-      run: ls 
+      run: ls bin/
       
     - name: Test
       working-directory: ${{github.workspace}}/build
