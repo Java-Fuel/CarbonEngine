@@ -1,4 +1,3 @@
-#include <Math/Math.hpp>
 #include <Platform/Win32Platform.h>
 #include "Platform/PlatformEventManager.h"
 #include <Utils/Defines.h>

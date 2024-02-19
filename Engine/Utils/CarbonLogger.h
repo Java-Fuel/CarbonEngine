@@ -1,8 +1,9 @@
-#ifndef LOGGER_HPP
-#define LOGGER_HPP
+#ifndef CARBONLOGGER_H
+#define CARBONLOGGER_H
 
 #include <string>
 #include <stdio.h>
+#include <windows.h>
 
 /*
 TODO: Currently we are just logging to windows debug console, we will need to:
@@ -18,24 +19,28 @@ TODO: Add bit signature variable to keep track of which logging types are enable
 enum LogLevel
 {
     INFO,
-    WARNING,
-    ERROR
+    WARN,
+    ERR
 };
 
 class CarbonLogger
 {
 public:
-    LogLevel loglevel;
+    LogLevel logLevel;
 
 private:
     static CarbonLogger* m_instance;
 
 public:
+    static CarbonLogger* current();
+    void info(std::string message);
+    void warn(std::string message);
+    void error(std::string message);
+
+protected:
     CarbonLogger();
-    static CarbonLogger* Current();
-    void Info(std::string message);
-    void Warn(std::string message);
-    void Error(std::string message);
 };
+
+#include "Logger_inl.h"
 
 #endif
