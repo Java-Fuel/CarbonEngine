@@ -4,6 +4,7 @@
 #include <string>
 #include <stdio.h>
 #include <windows.h>
+#include "Defines.h"
 
 /*
 TODO: Currently we are just logging to windows debug console, we will need to:
@@ -36,6 +37,7 @@ public:
     void info(std::string message);
     void warn(std::string message);
     void error(std::string message);
+    void winError();
 
 protected:
     CarbonLogger();
