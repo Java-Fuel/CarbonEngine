@@ -134,6 +134,18 @@ void Win32Platform::ResizeWindowHandler(PlatformEventArgs* args)
     Win32Draw();
 }
 
+void* Win32Platform::Valloc(u32 size)
+{
+    LPVOID memory = VirtualAlloc(NULL, size, MEM_COMMIT, PAGE_READWRITE);
+    // Check if allocation failed
+    if (!memory)
+    {
+        CarbonLogger* logger = CarbonLogger::current();
+        logger->error("Could not allocate memory in virtual address space.\n");
+        logger->winError();
+    }
+    return (void*)memory;
+}
 
 /* Private Methods */
 
@@ -159,20 +171,7 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
         if (r)
         {
             // TODO: Move to logging system
-            DWORD errorCode = GetLastError();
-            LPVOID msgBuffer;
-            FormatMessage(
-                FORMAT_MESSAGE_ALLOCATE_BUFFER |
-                    FORMAT_MESSAGE_FROM_SYSTEM |
-                    FORMAT_MESSAGE_IGNORE_INSERTS,
-                NULL,
-                errorCode,
-                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                (LPTSTR)&msgBuffer,
-                0,
-                NULL);
-
-            OutputDebugStringA((LPCSTR)msgBuffer);
+            
         }
         result = 0;
     }
@@ -212,7 +211,7 @@ void Win32Platform::ResizeBackbuffer(i32 newWidth, i32 newHeight)
 
     // Allocate new back buffer
     i32 backBufferSize = (newWidth * newHeight) * bytesPerPixel;
-    backBuffer = (u8*)VirtualAlloc(NULL, backBufferSize, MEM_COMMIT, PAGE_READWRITE);
+    backBuffer = (u8*)Valloc(backBufferSize);
     bufferWidth = newWidth;
     bufferHeight = newHeight;
     
@@ -226,15 +225,15 @@ void Win32Platform::ResizeBackbuffer(i32 newWidth, i32 newHeight)
         for(u32 X = 0; X < bufferWidth; ++X)
         {
             // Set Blue
-            *pixel = 0;
+            *pixel = X + Y;
             ++pixel;
 
             // Set Green
-            *pixel = 0;
+            *pixel = X;
             ++pixel;
 
             // Set Red
-            *pixel = 255;
+            *pixel = Y;
             ++pixel;
 
             // Set Alpha

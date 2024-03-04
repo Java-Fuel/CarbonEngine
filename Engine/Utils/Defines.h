@@ -35,5 +35,10 @@ typedef double f64;
 #define ENGINE_PLATFORM WIN32
 #endif
 
+#ifdef CAPI_EXPORT
+#define CAPI __declspec( dllexport )
+#else
+#define CAPI __declspec( dllimport )
+#endif 
 
 #endif

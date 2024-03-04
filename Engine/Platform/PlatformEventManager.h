@@ -4,14 +4,15 @@
 #include <vector>
 #include <unordered_map>
 #include "PlatformEventHandler.h"
+#include "Utils/Defines.h"
 
 
-enum PlatformEventType
+CAPI enum PlatformEventType
 {
     WINDOW_RESIZE
 };
 
-class PlatformEventManager
+CAPI class PlatformEventManager
 {
     /* Variables */
     public:

@@ -6,13 +6,14 @@
 #include <stdlib.h>
 #include <windows.h>
 #include "PlatformEventManager.h"
+#include "Utils/CarbonLogger.h"
 
 /**
  * Defines the standard interface for interacting with different
  * platforms.
  */
 
-class Win32Platform
+CAPI class Win32Platform
 {
 
 public:
@@ -61,8 +62,22 @@ public:
      * Draw buffer to the display
      */
     void Win32Draw();
-
+    
+    /**
+     * Handle window resize event for back buffer
+     * @param args The arguments from resize event
+    */
     void ResizeWindowHandler(PlatformEventArgs* args);
+
+    /**
+     * Alloc pages in virtual memory space.
+     * Note: This method allows the system to determine where to allocate 
+     * the memory (it does not specify a location in virtual address space).
+     * It also assumes read write access for the memory location in the OS.
+     * @param size The size of memory block to allocate in bytes
+     * @return Pointer to block of memory
+    */
+    void* Valloc(u32 size);
 
 private:
     /**

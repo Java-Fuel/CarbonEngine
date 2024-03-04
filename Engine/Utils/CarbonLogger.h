@@ -24,7 +24,7 @@ enum LogLevel
     ERR
 };
 
-class CarbonLogger
+CAPI class CarbonLogger
 {
 public:
     LogLevel logLevel;
