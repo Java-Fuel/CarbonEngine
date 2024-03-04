@@ -1,6 +1,6 @@
-#include <windows.h>
 #include "Win32Platform.h"
-#include "Platform/PlatformEventManager.h"
+
+
 
 
 /**
@@ -140,9 +140,9 @@ void* Win32Platform::Valloc(u32 size)
     // Check if allocation failed
     if (!memory)
     {
-        CarbonLogger* logger = CarbonLogger::current();
-        logger->error("Could not allocate memory in virtual address space.\n");
-        logger->winError();
+        // CarbonLogger* logger = CarbonLogger::current();
+        // logger->error("Could not allocate memory in virtual address space.\n");
+        // logger->winError();
     }
     return (void*)memory;
 }

@@ -1,5 +1,5 @@
-#ifndef PLATFORM_HPP
-#define PLATFORM_HPP
+#ifndef PLATFORM_H
+#define PLATFORM_H
 
 #include "Utils/Defines.h"
 #include <stdio.h>
@@ -13,7 +13,7 @@
  * platforms.
  */
 
-CAPI class Win32Platform
+class Win32Platform
 {
 
 public:
@@ -78,6 +78,19 @@ public:
      * @return Pointer to block of memory
     */
     void* Valloc(u32 size);
+
+    /**
+     * Allocate memory directly from the heap. 
+     * Note: Memory allocated using Halloc is not movable. 
+     * @param size The size of the memory region to allocate in bytes
+     * @return pointer to memory region
+    */
+    void* Halloc(u32 size);
+
+    /**
+     * Frees memory that was allocated using Halloc.
+    */
+    void Hfree();
 
 private:
     /**

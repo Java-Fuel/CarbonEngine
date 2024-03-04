@@ -8,13 +8,13 @@
  * implement a platform event handler. 
  */
 
-CAPI struct PlatformEventArgs
+struct PlatformEventArgs
 {
     i32 first;
     i32 second;
 };
 
-CAPI class IPlatformEventHandler 
+class IPlatformEventHandler 
 {
     /* Variables */
     

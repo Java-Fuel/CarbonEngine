@@ -7,12 +7,12 @@
 #include "Utils/Defines.h"
 
 
-CAPI enum PlatformEventType
+enum PlatformEventType
 {
     WINDOW_RESIZE
 };
 
-CAPI class PlatformEventManager
+class PlatformEventManager
 {
     /* Variables */
     public:
@@ -37,6 +37,5 @@ CAPI class PlatformEventManager
         std::vector<IPlatformEventHandler*>* m_getSubscribers(PlatformEventType eventType);
 };
 
-// #include "PlatformEventManager_inl.h"
 
 #endif

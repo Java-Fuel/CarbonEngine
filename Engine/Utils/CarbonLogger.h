@@ -24,7 +24,7 @@ enum LogLevel
     ERR
 };
 
-CAPI class CarbonLogger
+class CarbonLogger
 {
 public:
     LogLevel logLevel;
@@ -42,7 +42,5 @@ public:
 protected:
     CarbonLogger();
 };
-
-#include "Logger_inl.h"
 
 #endif
