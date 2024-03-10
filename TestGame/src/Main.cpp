@@ -39,14 +39,7 @@ void RenderPattern(Win32Platform* platform, int xOffset, int yOffset)
 int WINAPI WinMain(HINSTANCE handle, HINSTANCE prevHandle, PSTR args, int displayMode)
 {
 
-    Win32Platform p = Win32Platform(); 
-
-    b8 init = p.Win32Init("Test Game", 500, 500, 500, 500);
-    if(init) // Initialization Failure
-    {
-        OutputDebugStringA("Could not initialize the Windows platform layer!\n");
-        return 1;
-    }
+    Win32Platform p = Win32Platform("Test Game", 500, 500, 500, 500); 
 
     b8 createWin = p.Win32CreateWindow();
     if (createWin) // Window Creation Failure)

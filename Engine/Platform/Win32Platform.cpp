@@ -15,19 +15,17 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
 
 /* Platform.hpp Implementation */
 
-b8 Win32Platform::Win32Init(const char* applicationName, i32 x, i32 y, i32 width, i32 height)
+Win32Platform::Win32Platform(const char* applicationName, i32 x, i32 y, i32 width, i32 height)
 {   
-    windowWidth = width;
-    windowHeight = height;
-    windowX = x;
-    windowY = y;
-    applicationName = applicationName;
-    bytesPerPixel = 4;
+    this->windowWidth = width;
+    this->windowHeight = height;
+    this->windowX = x;
+    this->windowY = y;
+    this->applicationName = applicationName;
+    this->bytesPerPixel = 4;
 
     PlatformEventManager* current = PlatformEventManager::current();
     current->subscribe(PlatformEventType::WINDOW_RESIZE, new PlatformEventHandler<Win32Platform>(this, &Win32Platform::ResizeWindowHandler));
-    
-    return 0;
 }
 
 b8 Win32Platform::Win32CreateWindow()
@@ -193,6 +191,44 @@ void Win32Platform::Vfree(void* ptr, unsigned int size)
         0,
         MEM_RELEASE
     );
+}
+
+void* Win32Platform::Halloc(unsigned int size)
+{
+    HANDLE heapHandle = GetProcessHeap();
+
+    // Check if we were unable to get process heap
+    if (heapHandle == NULL)
+    {
+        CarbonLogger* logger = CarbonLogger::current();
+        logger->error("Could not get handle to process heap.\n");
+        logger->winError();
+        return nullptr;
+    }
+
+    LPVOID memory = HeapAlloc(heapHandle, HEAP_ZERO_MEMORY, size);
+    return memory;
+}
+
+void Win32Platform::Hfree(void* ptr)
+{
+    CarbonLogger* logger = CarbonLogger::current();
+
+    HANDLE heapHandle = GetProcessHeap();
+    if (heapHandle == NULL)
+    {
+        logger->error("Could not get handle to process heap.\n");
+        logger->winError();
+        return;
+    }
+
+    BOOL result = HeapFree(heapHandle, HEAP_NO_SERIALIZE, ptr);
+    // Check if free operation failed
+    if (!result)
+    {
+        logger->error("Could not free memory in heap.\n");
+        logger->winError();
+    }
 }
 
 /* Private Methods */

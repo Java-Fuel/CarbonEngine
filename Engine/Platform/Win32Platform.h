@@ -32,7 +32,6 @@ public:
     
 
 public:
-    
     /**
      * Initialize the platform by creating an application window
      * @param context The PlatformContext to be initialized
@@ -43,7 +42,7 @@ public:
      * @param height the starting height of the window
      * @return 0 on successful initialization, error number greater than zero on failed init
      */
-    b8 Win32Init(const char *applicationName, int x, int y, int width, int height);
+    Win32Platform(const char *applicationName, int x, int y, int width, int height);
     
     /**
      * Create a window on the current platform.
@@ -90,8 +89,9 @@ public:
 
     /**
      * Frees memory that was allocated using Halloc.
+     * @param ptr A pointer to the memory that needs to be freed
     */
-    void Hfree();
+    void Hfree(void* ptr);
 
     void Vfree(void* ptr, unsigned int size);
 
