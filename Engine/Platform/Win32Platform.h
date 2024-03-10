@@ -17,16 +17,17 @@ class Win32Platform
 {
 
 public:
-    i32 windowX;
-    i32 windowY;
-    i32 windowWidth;
-    i32 windowHeight;
-    i32 bufferWidth;
-    i32 bufferHeight;
+    int windowX;
+    int windowY;
+    int windowWidth;
+    int windowHeight;
+    int bufferWidth;
+    int bufferHeight;
     HWND windowHandle;
     const char* applicationName;
     u8* backBuffer;
     u8 bytesPerPixel;
+    unsigned int bufferSize;
     BITMAPINFO bitMapInfo;
     
 
@@ -42,7 +43,7 @@ public:
      * @param height the starting height of the window
      * @return 0 on successful initialization, error number greater than zero on failed init
      */
-    b8 Win32Init(const char *applicationName, i32 x, i32 y, i32 width, i32 height);
+    b8 Win32Init(const char *applicationName, int x, int y, int width, int height);
     
     /**
      * Create a window on the current platform.
@@ -77,7 +78,7 @@ public:
      * @param size The size of memory block to allocate in bytes
      * @return Pointer to block of memory
     */
-    void* Valloc(u32 size);
+    void* Valloc(unsigned int size);
 
     /**
      * Allocate memory directly from the heap. 
@@ -85,18 +86,20 @@ public:
      * @param size The size of the memory region to allocate in bytes
      * @return pointer to memory region
     */
-    void* Halloc(u32 size);
+    void* Halloc(unsigned int size);
 
     /**
      * Frees memory that was allocated using Halloc.
     */
     void Hfree();
 
+    void Vfree(void* ptr, unsigned int size);
+
 private:
     /**
      * Resize the Device Independent Bitman (DIB) provided by Windows platform
      */
-    void ResizeBackbuffer(i32 newWidth, i32 newHeight);
+    void ResizeBackbuffer(int newWidth, int newHeight);
 
     /**
      * Update window with new data that was moved into back buffer

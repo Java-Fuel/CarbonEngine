@@ -121,7 +121,25 @@ void Win32Platform::Win32Draw()
 {
     RECT windowRect;
     GetClientRect(windowHandle, &windowRect);
-    DrawBuffer(&windowRect);
+    u32 windowWidth = windowRect.right - windowRect.left;
+    u32 windowHeight = windowRect.bottom - windowRect.top;
+    HDC context = GetDC(windowHandle);
+    StretchDIBits(
+        context,
+        0,
+        0, 
+        windowWidth,
+        windowHeight,
+        0,
+        0,
+        bufferWidth,
+        bufferHeight,
+        backBuffer,
+        &bitMapInfo,
+        DIB_RGB_COLORS,
+        SRCCOPY
+    );
+    ReleaseDC(windowHandle, context);
 }
 
 void Win32Platform::ResizeWindowHandler(PlatformEventArgs* args)
@@ -130,7 +148,28 @@ void Win32Platform::ResizeWindowHandler(PlatformEventArgs* args)
     i32 height = args->second;
     u32 i = 9;
 
-    ResizeBackbuffer(width, height);
+    // Release old memory if it exists 
+    if (backBuffer)
+    {
+        Vfree((void*)backBuffer, 0);
+    }
+
+    // Create new bitMapInfo
+    bitMapInfo = {};
+    bitMapInfo.bmiHeader.biSize = sizeof(bitMapInfo.bmiHeader);
+    bitMapInfo.bmiHeader.biWidth = width;
+    bitMapInfo.bmiHeader.biHeight = -height; // Negative so we go top down 
+    bitMapInfo.bmiHeader.biPlanes = 1;
+    bitMapInfo.bmiHeader.biBitCount = 32; // RGBa 8 bits * 4 values giving us (0-255, 0-255, 0-255, 0-255)
+    bitMapInfo.bmiHeader.biCompression = BI_RGB;
+
+    // Allocate new back buffer
+    bufferSize = (width * height) * bytesPerPixel;
+    backBuffer = (u8*)Valloc(bufferSize);
+    bufferWidth = width;
+    bufferHeight = height;
+
+
     Win32Draw();
 }
 
@@ -147,6 +186,15 @@ void* Win32Platform::Valloc(u32 size)
     return (void*)memory;
 }
 
+void Win32Platform::Vfree(void* ptr, unsigned int size)
+{
+    VirtualFree(
+        ptr,
+        0,
+        MEM_RELEASE
+    );
+}
+
 /* Private Methods */
 
 LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -158,8 +206,8 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     {
     case WM_SIZE:
     {
-        i32 width = (i32)LOWORD(lparam);
-        i32 height = (i32)HIWORD(lparam);
+        int width = (int)LOWORD(lparam);
+        int height = (int)HIWORD(lparam);
         PlatformEventManager::current()->publishEvent(PlatformEventType::WINDOW_RESIZE, new PlatformEventArgs{width, height});
         result = 0;
     }
@@ -194,75 +242,3 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     return result;
 }
 
-void Win32Platform::ResizeBackbuffer(i32 newWidth, i32 newHeight)
-{
-    // TODO: Release old buffer (going to mem leak)
-    // MEMORY LEAKING LIKE CRAZY
-    
-    // Create new bitMapInfo
-    bitMapInfo = {};
-    bitMapInfo.bmiHeader.biSize = sizeof(bitMapInfo.bmiHeader);
-    bitMapInfo.bmiHeader.biWidth = newWidth;
-    bitMapInfo.bmiHeader.biHeight = -newHeight;
-    bitMapInfo.bmiHeader.biPlanes = 1;
-    bitMapInfo.bmiHeader.biBitCount = 32; // RGBa 8 bits * 4 values giving us (0-255, 0-255, 0-255, 0-255)
-    bitMapInfo.bmiHeader.biCompression = BI_RGB;
-
-
-    // Allocate new back buffer
-    i32 backBufferSize = (newWidth * newHeight) * bytesPerPixel;
-    backBuffer = (u8*)Valloc(backBufferSize);
-    bufferWidth = newWidth;
-    bufferHeight = newHeight;
-    
-    // Draw to buffer
-    u32 stride = bufferWidth * bytesPerPixel;
-    u8* row = (u8*)backBuffer;
-    for(u32 Y = 0; Y < bufferHeight; ++Y)
-    {   
-        // Row of Pixel
-        u8* pixel = row;
-        for(u32 X = 0; X < bufferWidth; ++X)
-        {
-            // Set Blue
-            *pixel = X + Y;
-            ++pixel;
-
-            // Set Green
-            *pixel = X;
-            ++pixel;
-
-            // Set Red
-            *pixel = Y;
-            ++pixel;
-
-            // Set Alpha
-            *pixel = 0;
-            ++pixel;
-        }
-        row += stride;
-    }
-}
-
-void Win32Platform::DrawBuffer(RECT* windowRect)
-{
-    u32 windowWidth = windowRect->right - windowRect->left;
-    u32 windowHeight = windowRect->bottom - windowRect->top;
-    HDC context = GetDC(windowHandle);
-    StretchDIBits(
-        context,
-        0,
-        0, 
-        windowWidth,
-        windowHeight,
-        0,
-        0,
-        bufferWidth,
-        bufferHeight,
-        backBuffer,
-        &bitMapInfo,
-        DIB_RGB_COLORS,
-        SRCCOPY
-    );
-    ReleaseDC(windowHandle, context);
-}
