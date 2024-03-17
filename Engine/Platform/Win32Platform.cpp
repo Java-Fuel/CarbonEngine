@@ -2,7 +2,6 @@
 
 
 
-
 /**
  * @brief Windows Callback function to respond to Windows events
  * @param handle a handle to the window where event occurred
@@ -174,13 +173,6 @@ void Win32Platform::ResizeWindowHandler(PlatformEventArgs* args)
 void* Win32Platform::Valloc(u32 size)
 {
     LPVOID memory = VirtualAlloc(NULL, size, MEM_COMMIT, PAGE_READWRITE);
-    // Check if allocation failed
-    if (!memory)
-    {
-        // CarbonLogger* logger = CarbonLogger::current();
-        // logger->error("Could not allocate memory in virtual address space.\n");
-        // logger->winError();
-    }
     return (void*)memory;
 }
 
@@ -231,6 +223,12 @@ void Win32Platform::Hfree(void* ptr)
     }
 }
 
+unsigned int Win32Platform::getTick()
+{
+    DWORD ticks = GetTickCount64();
+    return static_cast<unsigned int>(ticks);
+}
+
 /* Private Methods */
 
 LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -250,7 +248,6 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     break;
     case WM_CLOSE:
     {
-        OutputDebugStringA("Closing window...\n");
         BOOL r = DestroyWindow(handle);
         if (r)
         {
@@ -262,7 +259,6 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     break;
     case WM_DESTROY:
     {
-        OutputDebugStringA("Destroying window...\n");
         PostQuitMessage(0);
         result = 0;
     }
@@ -270,7 +266,6 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
     // TODO: Handle closed window
     default:
     {
-        OutputDebugStringA("Handling msg with default method.\n");
         result = DefWindowProcA(handle, msg, wparam, lparam);
     }
     }

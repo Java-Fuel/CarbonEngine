@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <sysinfoapi.h>
 #include "PlatformEventManager.h"
 #include "Utils/CarbonLogger.h"
 
@@ -93,7 +94,19 @@ public:
     */
     void Hfree(void* ptr);
 
+    /**
+     * Free virtual memory allocated by win32 system
+     * @param ptr A pointer to the memeory to be freed
+     * @param size Size of the memory to free. If set to 0, the size will be calculated
+    */
     void Vfree(void* ptr, unsigned int size);
+
+    /**
+     * Get time in ms since system started. 
+     * Note: time is updated every 10 ms - 16 ms through Windows, this could cause issues if game is running
+     * at a very high FPS
+    */
+    unsigned int getTick();
 
 private:
     /**

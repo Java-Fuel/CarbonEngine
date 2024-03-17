@@ -1,5 +1,6 @@
 #include <Platform/Win32Platform.h>
 #include "Platform/PlatformEventManager.h"
+#include "Renderer/Renderer.h"
 #include <Utils/Defines.h>
 #include <windows.h>
 #include <Debugapi.h>
@@ -47,19 +48,22 @@ int WINAPI WinMain(HINSTANCE handle, HINSTANCE prevHandle, PSTR args, int displa
         OutputDebugStringA("Could not create window!\n");
         return 1;
     }
-    
-    int xOffset = 0;
-    int yOffset = 100;
-    u8 running = true;
-    while (running)
-    {
-        running = p.Win32PollEvents();
-        RenderPattern(&p, xOffset, yOffset);
-        p.Win32Draw();
 
-        xOffset++;
-        yOffset++;      
-    }
+    Renderer renderer = Renderer(&p, 60);
+    renderer.start();
+    
+    // int xOffset = 0;
+    // int yOffset = 100;
+    // u8 running = true;
+    // while (running)
+    // {
+    //     running = p.Win32PollEvents();
+    //     RenderPattern(&p, xOffset, yOffset);
+    //     p.Win32Draw();
+
+    //     xOffset++;
+    //     yOffset++;      
+    // }
 
     return 0;
 }
