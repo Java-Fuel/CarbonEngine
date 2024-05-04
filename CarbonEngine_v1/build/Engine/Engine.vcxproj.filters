@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\JavaFuel\CarbonEngine\Engine\Platform\PlatformEventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JavaFuel\CarbonEngine\Engine\Platform\PlatformEventManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JavaFuel\CarbonEngine\Engine\Platform\Win32Platform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JavaFuel\CarbonEngine\Engine\Renderer\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\JavaFuel\CarbonEngine\Engine\Utils\Win32Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\JavaFuel\CarbonEngine\Engine\Platform\PlatformEventHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\JavaFuel\CarbonEngine\Engine\Platform\PlatformEventHandler_inl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\JavaFuel\CarbonEngine\Engine\Platform\PlatformEventManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\JavaFuel\CarbonEngine\Engine\Platform\Win32Platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\JavaFuel\CarbonEngine\Engine\Renderer\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\JavaFuel\CarbonEngine\Engine\Utils\CarbonLogger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\JavaFuel\CarbonEngine\Engine\Utils\Defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\JavaFuel\CarbonEngine\Engine\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{E733E556-B936-3175-A0CE-6EB695CB10F6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{A028AAA5-177B-311B-85D7-D525E802236C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

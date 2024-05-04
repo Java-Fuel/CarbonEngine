@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\JavaFuel\CarbonEngine\build\CMakeFiles\5170b4ec3fda3fa2b75ffa79571736d0\Nightly.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\JavaFuel\CarbonEngine\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\JavaFuel\CarbonEngine\build\CMakeFiles\Nightly" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{7EA85900-230D-307C-93D0-AD8AC0B87484}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

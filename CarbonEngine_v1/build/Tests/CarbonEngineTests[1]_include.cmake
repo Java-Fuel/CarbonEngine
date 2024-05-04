@@ -1,0 +1,5 @@
+if(EXISTS "D:/JavaFuel/CarbonEngine/build/Tests/CarbonEngineTests[1]_tests.cmake")
+  include("D:/JavaFuel/CarbonEngine/build/Tests/CarbonEngineTests[1]_tests.cmake")
+else()
+  add_test(CarbonEngineTests_NOT_BUILT CarbonEngineTests_NOT_BUILT)
+endif()

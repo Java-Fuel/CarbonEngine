@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\JavaFuel\CarbonEngine\build\CMakeFiles\7c07e75f6d6af6c1262bbbd986310481\RUN_TESTS_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{7EA85900-230D-307C-93D0-AD8AC0B87484}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
