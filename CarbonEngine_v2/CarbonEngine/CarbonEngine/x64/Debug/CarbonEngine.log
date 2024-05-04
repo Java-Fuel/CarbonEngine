@@ -1,0 +1,11 @@
+﻿  Renderer.cpp
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Win32Platform.h(29,15): warning C4251: 'Win32Platform::applicationName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Win32Platform'
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\xstring(5294,17): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\ControllerInput.h(27,1): warning C4005: 'XINPUT_DLL': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\um\Xinput.h(32,1): message : see previous definition of 'XINPUT_DLL'
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.cpp(53,17): warning C4305: '+=': truncation from 'double' to 'float'
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.cpp(54,17): warning C4305: '+=': truncation from 'double' to 'float'
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.cpp(83,29): warning C4018: '<': signed/unsigned mismatch
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.cpp(87,30): warning C4018: '<': signed/unsigned mismatch
+     Creating library D:\JavaFuel\CarbonEngine_v2\CarbonEngine\x64\Debug\CarbonEngine.lib and object D:\JavaFuel\CarbonEngine_v2\CarbonEngine\x64\Debug\CarbonEngine.exp
+  CarbonEngine.vcxproj -> D:\JavaFuel\CarbonEngine_v2\CarbonEngine\x64\Debug\CarbonEngine.dll

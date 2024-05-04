@@ -1,0 +1,10 @@
+﻿  Renderer.cpp
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Win32Platform.h(29,15): warning C4251: 'Win32Platform::applicationName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Win32Platform'
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\xstring(5294,17): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.cpp(46,13): warning C4552: '+': result of expression not used
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.cpp(47,13): warning C4552: '+': result of expression not used
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.cpp(59,3): error C2660: 'Renderer::renderPattern': function does not take 0 arguments
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.h(37,8): message : see declaration of 'Renderer::renderPattern'
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.cpp(59,3): message : while trying to match the argument list '()'
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.cpp(74,30): warning C4018: '<': signed/unsigned mismatch
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Renderer.cpp(78,32): warning C4018: '<': signed/unsigned mismatch

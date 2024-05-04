@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs>
+    <ProjectOutput>
+      <FullPath>D:\JavaFuel\CarbonEngine_v2\CarbonEngine\x64\Debug\CarbonEngine.dll</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
+      <FullPath>D:\JavaFuel\CarbonEngine_v2\CarbonEngine\x64\Debug\TestGame.exe</FullPath>
+    </ProjectOutput>
+  </ProjectOutputs>
+  <ContentFiles />
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>

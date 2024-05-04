@@ -1,0 +1,10 @@
+﻿  Main.cpp
+D:\JavaFuel\CarbonEngine_v2\CarbonEngine\CarbonEngine\Win32Platform.h(29,15): warning C4251: 'Win32Platform::applicationName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'Win32Platform'
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\xstring(5294,17): message : see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+     Creating library D:\JavaFuel\CarbonEngine_v2\CarbonEngine\x64\Release\TestGame.lib and object D:\JavaFuel\CarbonEngine_v2\CarbonEngine\x64\Release\TestGame.exp
+  Generating code
+  0 of 93 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  TestGame.vcxproj -> D:\JavaFuel\CarbonEngine_v2\CarbonEngine\x64\Release\TestGame.exe
