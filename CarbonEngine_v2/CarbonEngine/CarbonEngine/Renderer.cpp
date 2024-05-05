@@ -60,7 +60,6 @@ void Renderer::processInput()
 {
 	_platform->Win32PollEvents();
 	PollControllerInput();
-	RumbleController(1, 1);
 }
 
 void Renderer::update()

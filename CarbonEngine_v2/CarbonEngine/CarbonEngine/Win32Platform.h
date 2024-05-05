@@ -1,6 +1,8 @@
 #pragma once
 
 #include "PlatformEventManager.h"
+#include "CarbonLogger.h"
+#include "KeyboardInput.h"
 #include "Defines.h"
 
 #include <stdio.h>

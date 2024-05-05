@@ -132,6 +132,7 @@
     <ClInclude Include="CarbonLogger.h" />
     <ClInclude Include="ControllerInput.h" />
     <ClInclude Include="Defines.h" />
+    <ClInclude Include="KeyboardInput.h" />
     <ClInclude Include="PlatformEventHandler.h" />
     <ClInclude Include="PlatformEventManager.h" />
     <ClInclude Include="Renderer.h" />
@@ -142,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ControllerInput.cpp" />
+    <ClCompile Include="KeyboardInput.cpp" />
     <ClCompile Include="PlatformEventHandler.cpp" />
     <ClCompile Include="PlatformEventManager.cpp" />
     <ClCompile Include="Renderer.cpp" />

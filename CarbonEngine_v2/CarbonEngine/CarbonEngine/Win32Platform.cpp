@@ -1,5 +1,5 @@
 #include "Win32Platform.h"
-#include "CarbonLogger.h"
+
 
 
 
@@ -247,6 +247,11 @@ LRESULT CALLBACK WindowProc(HWND handle, UINT msg, WPARAM wparam, LPARAM lparam)
 		result = 0;
 	}
 	break;
+	case WM_KEYDOWN:
+	case WM_KEYUP:
+	{
+		ProcessKeystroke(wparam, lparam);
+	}break;
 	case WM_CLOSE:
 	{
 		BOOL r = DestroyWindow(handle);
