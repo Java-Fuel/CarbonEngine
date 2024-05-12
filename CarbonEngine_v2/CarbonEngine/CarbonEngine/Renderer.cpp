@@ -3,7 +3,6 @@
 Renderer::Renderer(Win32Platform* platform, int targetFps)
 {
 	this->_platform = platform;
-	this->_logger = CarbonLogger::current();
 	this->targetFps = targetFps;
 	this->targetFrameTime = 1000 / this->targetFps;
 	this->_runGame = false;
@@ -26,6 +25,7 @@ Renderer::~Renderer()
 void Renderer::start()
 {
 	_runGame = true;
+	DSoundInitialize();
 	initXInput();
 	run();
 }

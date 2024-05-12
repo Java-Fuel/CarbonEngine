@@ -4,6 +4,7 @@
 #include "Defines.h"
 #include "ControllerInput.h"
 #include "PlatformEventManager.h"
+#include "Audio.h"
 
 #include <string>
 
@@ -17,7 +18,6 @@ public:
 private:
   bool _runGame;
   Win32Platform* _platform;
-  CarbonLogger* _logger;
 
   // TODO: Debug only, delete when done
   float xOffset;

@@ -193,9 +193,8 @@ void* Win32Platform::Halloc(unsigned int size)
 	// Check if we were unable to get process heap
 	if (heapHandle == NULL)
 	{
-		CarbonLogger* logger = CarbonLogger::current();
-		logger->error("Could not get handle to process heap.\n");
-		logger->winError();
+		LogError("Could not get handle to process heap.\n");
+		LogWinError();
 		return nullptr;
 	}
 
@@ -205,13 +204,12 @@ void* Win32Platform::Halloc(unsigned int size)
 
 void Win32Platform::Hfree(void* ptr)
 {
-	CarbonLogger* logger = CarbonLogger::current();
 
 	HANDLE heapHandle = GetProcessHeap();
 	if (heapHandle == NULL)
 	{
-		logger->error("Could not get handle to process heap.\n");
-		logger->winError();
+		LogError("Could not get handle to process heap.\n");
+		LogWinError();
 		return;
 	}
 
@@ -219,8 +217,8 @@ void Win32Platform::Hfree(void* ptr)
 	// Check if free operation failed
 	if (!result)
 	{
-		logger->error("Could not free memory in heap.\n");
-		logger->winError();
+		LogError("Could not free memory in heap.\n");
+		LogWinError();
 	}
 }
 

@@ -21,21 +21,9 @@ enum LogLevel
   ERR
 };
 
-class CarbonLogger
-{
-public:
-  LogLevel logLevel;
+static LogLevel logLevel = LogLevel::INFO;
 
-private:
-  static CarbonLogger* m_instance;
-
-public:
-  static CarbonLogger* current();
-  void info(std::string message);
-  void warn(std::string message);
-  void error(std::string message);
-  void winError();
-
-protected:
-  CarbonLogger();
-};
+void LogInfo(std::string message);
+void LogWarn(std::string message);
+void LogError(std::string message);
+void LogWinError();

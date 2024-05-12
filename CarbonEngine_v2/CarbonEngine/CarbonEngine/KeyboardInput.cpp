@@ -3,7 +3,7 @@
 void ProcessKeystroke(WPARAM keyCode, LPARAM prevState)
 {
 	unsigned int key = keyCode;
-	int pState = (prevState >> 30) & 0x1;
+	int pState = ((1 << 30) & prevState) == 0;
 	char msg[100];
 	sprintf_s(msg, 100, "Previous State: %d\n", pState);
 	OutputDebugStringA(msg);

@@ -1,43 +1,25 @@
 #include "CarbonLogger.h"
 
 
-CarbonLogger* CarbonLogger::m_instance = 0;
-
-CarbonLogger* CarbonLogger::current()
-{
-  if (m_instance == nullptr)
-  {
-    m_instance = new CarbonLogger();
-  }
-
-  return m_instance;
-}
-
-
-CarbonLogger::CarbonLogger()
-{
-  return;
-}
-
-void CarbonLogger::info(std::string message)
+void LogInfo(std::string message)
 {
   OutputDebugStringA(message.c_str());
   OutputDebugStringA("\n");
 }
 
-void CarbonLogger::warn(std::string message)
+void LogWarn(std::string message)
 {
   OutputDebugStringA(message.c_str());
   OutputDebugStringA("\n");
 }
 
-void CarbonLogger::error(std::string message)
+void LogError(std::string message)
 {
   OutputDebugStringA(message.c_str());
   OutputDebugStringA("\n");
 }
 
-void CarbonLogger::winError()
+void LogWinError()
 {
   unsigned int errorCode = GetLastError();
   LPVOID msgBuffer;

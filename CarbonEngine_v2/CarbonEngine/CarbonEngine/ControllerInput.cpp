@@ -9,24 +9,24 @@ static int motorSpeed = 10000;
 // Set default method for XInputGetState in case DLL is not found (prevents game crash)
 X_INPUT_GET_STATE(XInputGetStateStub)
 {
-	return (0);
+	return (ERROR_DEVICE_NOT_CONNECTED);
 }
 static x_input_get_state* XInputGetState_ = XInputGetStateStub;
 
 // Set default method for XInputSetState in case DLL is not found (prevents game crash)
 X_INPUT_SET_STATE(XInputSetStateStub)
 {
-	return (0);
+	return (ERROR_DEVICE_NOT_CONNECTED);
 }
 static x_input_set_state* XInputSetState_ = XInputSetStateStub;
 
 void initXInput(void)
 {
-	// Load DLL
+	// TODO: Check if on Windows 8 b/c Windows 8 only supoprts XInput_1_4
 	HMODULE xinputLib = LoadLibraryA(XINPUT_DLL);
 	if (xinputLib == NULL)
 	{
-		CarbonLogger::current()->error("Could not load XInput DLL.");
+		LogError("Could not load XInput DLL.");
 		return;
 	}
 
@@ -34,7 +34,7 @@ void initXInput(void)
 	x_input_get_state* getStateFunc = (x_input_get_state*)GetProcAddress(xinputLib, "XInputGetState");
 	if (getStateFunc != NULL)
 	{
-		CarbonLogger::current()->info("Successfully loaded XInputGetState function!");
+		LogInfo("Successfully loaded XInputGetState function!");
 		XInputGetState_ = getStateFunc;
 	}
 
@@ -42,7 +42,7 @@ void initXInput(void)
 	x_input_set_state* setStateFunc = (x_input_set_state*)GetProcAddress(xinputLib, "XInputSetState");
 	if (setStateFunc != NULL)
 	{
-		CarbonLogger::current()->info("Successfully loaded XInputSetState function!");
+		LogInfo("Successfully loaded XInputSetState function!");
 		XInputSetState_ = setStateFunc;
 	}
 }
@@ -62,13 +62,13 @@ void PollControllerInput()
 			XINPUT_GAMEPAD gamepad = state.Gamepad;
 			if ((gamepad.wButtons & BUTTON_A) == BUTTON_A)
 			{
-				CarbonLogger::current()->info("'A' Button Pressed!");
+				LogInfo("'A' Button Pressed!");
 				motorSpeed += 1000;
 			}
 
 			if ((gamepad.wButtons & BUTTON_B) == BUTTON_B)
 			{
-				CarbonLogger::current()->info("'B' Button Pressed!");
+				LogInfo("'B' Button Pressed!");
 				motorSpeed -= 1000;
 			}
 		}
@@ -77,7 +77,7 @@ void PollControllerInput()
 
 void RumbleController(int leftMotorSpeed, int rightMotorSpeed)
 {
-	XINPUT_VIBRATION vibration; 
+	XINPUT_VIBRATION vibration;
 
 	if (leftMotorSpeed == 0 && rightMotorSpeed == 0)
 	{
@@ -89,11 +89,11 @@ void RumbleController(int leftMotorSpeed, int rightMotorSpeed)
 		vibration.wLeftMotorSpeed = motorSpeed;
 		vibration.wRightMotorSpeed = motorSpeed;
 	}
-	
+
 
 	DWORD rumbleResult = XInputSetState_(controllerIndex, &vibration);
 	if (rumbleResult == ERROR_DEVICE_NOT_CONNECTED)
 	{
-		CarbonLogger::current()->error("Could not find controller to vibrate.");
+		LogError("Could not find controller to vibrate.");
 	}
 }
