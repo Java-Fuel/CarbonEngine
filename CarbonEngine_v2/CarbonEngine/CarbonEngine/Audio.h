@@ -34,4 +34,11 @@ typedef DSOUND_CREATE_SOUND_BUFFER(dsound_create_sound_buffer);
 /**
  * @brief Load DirectSound DLL and initialize DirectSound hardware
 */
-void DSoundInitialize();
+void DSoundInitialize(HWND windowHandle, int bufferSize);
+
+/**
+* @brief Play sqauare wave
+*/
+void PlaySquareWave();
+
+void StartPlayback();

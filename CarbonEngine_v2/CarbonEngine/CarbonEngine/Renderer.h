@@ -5,6 +5,7 @@
 #include "ControllerInput.h"
 #include "PlatformEventManager.h"
 #include "Audio.h"
+#include "Dsound.h"
 
 #include <string>
 
@@ -22,6 +23,7 @@ private:
   // TODO: Debug only, delete when done
   float xOffset;
   float yOffset;
+  int squareWavCounter; 
 
 public:
   Renderer(Win32Platform* platform, int targetFps = 60);
