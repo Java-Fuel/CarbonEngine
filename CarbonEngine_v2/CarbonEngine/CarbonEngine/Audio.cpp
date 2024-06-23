@@ -1,6 +1,7 @@
 #include "Audio.h"
 
 
+/* -- DirectSound DLL Fallback Functions -- */
 // Fallback implementation for DirectSoundCreate 
 DSOUND_CREATE(DSoundCreateStub) 
 {
@@ -15,19 +16,19 @@ DSOUND_CREATE_SOUND_BUFFER(CreateSoundBufferStub)
 }
 static dsound_create_sound_buffer* DSoundCreateSoundBuffer = CreateSoundBufferStub;
 
-static LPDIRECTSOUNDBUFFER secondaryBuffer;
-static int secondaryBufferSize;
-static unsigned int runningSampleIndex = 0;
-static int bytesPerSample = 4; // 2 bytes for LEFT channel and 2 bytes for RIGHT channel
 
-void DSoundInitialize(HWND windowHandle, int bufferSize)
+/* -- AudioPlayback Implementation -- */
+AudioPlayback::AudioPlayback(HWND handle, int bufferLengthInSeconds)
 {
+	this->bufferSizeSeconds = bufferLengthInSeconds;
+	this->secondaryBufferSize = bufferSizeSeconds * sampleRate * bytesPerSample;
+
 	// Load DLL
-	HINSTANCE dsoundDll = LoadLibrary(DSOUND_DLL_NAME);
-	if (dsoundDll != NULL) 
+	this->dsoundDll = LoadLibrary(DSOUND_DLL_NAME);
+	if (this->dsoundDll != NULL)
 	{
 		// Load DirectSoundCreate function from DLL
-		dsound_create_com* create_func = (dsound_create_com*)GetProcAddress(dsoundDll, "DirectSoundCreate");
+		dsound_create_com* create_func = (dsound_create_com*)GetProcAddress(this->dsoundDll, "DirectSoundCreate");
 		if (create_func == NULL)
 		{
 			LogError("Could not load DSoundCreate function.\n");
@@ -41,10 +42,8 @@ void DSoundInitialize(HWND windowHandle, int bufferSize)
 		return;
 	}
 
-	// NOTE(Joe): Creating DirectSound object w/ default device here because we don't need it anywhere else in code
-	
-	LPDIRECTSOUND dsound;
-	HRESULT dsoundCreateResult = DSoundCreate(NULL, &dsound, NULL);
+	this->dsound;
+	HRESULT dsoundCreateResult = DSoundCreate(NULL, &this->dsound, NULL);
 	if (!SUCCEEDED(dsoundCreateResult))
 	{
 		LogError("Could not create IDirectSound object.\n");
@@ -52,13 +51,38 @@ void DSoundInitialize(HWND windowHandle, int bufferSize)
 	}
 
 	// Set cooperative level
-	HRESULT cooperativeResult = dsound->SetCooperativeLevel(windowHandle, DSSCL_PRIORITY);
+	HRESULT cooperativeResult = this->dsound->SetCooperativeLevel(handle, DSSCL_PRIORITY);
 	if (!SUCCEEDED(cooperativeResult))
 	{
 		LogError("Could not create prumary sound buffer.\n");
 		LogWinError();
 		return;
 	}
+
+	// Create WAV Formate
+	this->wavFormat = {};
+	this->wavFormat.wFormatTag = WAVE_FORMAT_PCM;
+	this->wavFormat.nChannels = this->numberOfChannels;
+	this->wavFormat.nSamplesPerSec = this->sampleRate;
+	this->wavFormat.wBitsPerSample = this->bitsPerSample;
+	this->wavFormat.nBlockAlign = (this->wavFormat.nChannels * this->wavFormat.wBitsPerSample) / 8;
+	this->wavFormat.cbSize = 0;
+	this->wavFormat.nAvgBytesPerSec = this->wavFormat.nSamplesPerSec * this->wavFormat.nBlockAlign;
+
+	CreatePrimaryBuffer(handle);
+	CreateSecondaryBuffer(handle);
+
+}
+
+void AudioPlayback::PlaySample()
+{
+
+}
+
+/* -- Private Methods -- */
+
+void AudioPlayback::CreatePrimaryBuffer(HWND handle)
+{
 
 	// Create primary buffer
 	DSBUFFERDESC primaryBufferDesc = {};
@@ -78,15 +102,7 @@ void DSoundInitialize(HWND windowHandle, int bufferSize)
 		return;
 	}
 
-	// Set format of primary buffer 
-	WAVEFORMATEX wavFormat = {};
-	wavFormat.wFormatTag = WAVE_FORMAT_PCM;
-	wavFormat.nChannels = 2;
-	wavFormat.nSamplesPerSec = 48000;
-	wavFormat.wBitsPerSample = 16;
-	wavFormat.nBlockAlign = (wavFormat.nChannels * wavFormat.wBitsPerSample) / 8;
-	wavFormat.cbSize = 0;
-	wavFormat.nAvgBytesPerSec = wavFormat.nSamplesPerSec*wavFormat.nBlockAlign;
+	// Set PrimaryBuffer format
 	HRESULT setFormatResult = primaryBuffer->SetFormat(&wavFormat);
 	if (!SUCCEEDED(setFormatResult))
 	{
@@ -94,88 +110,86 @@ void DSoundInitialize(HWND windowHandle, int bufferSize)
 		LogWinError();
 		return;
 	}
+}
 
+void AudioPlayback::CreateSecondaryBuffer(HWND handle)
+{
 	// Create Secondary Buffer 
 	DSBUFFERDESC secondaryBufferDesc = {};
 	secondaryBufferDesc.dwSize = sizeof(secondaryBufferDesc);
 	secondaryBufferDesc.dwFlags = 0;
-	secondaryBufferDesc.dwBufferBytes = bufferSize;
+	secondaryBufferDesc.dwBufferBytes = secondaryBufferSize;
 	secondaryBufferDesc.lpwfxFormat = &wavFormat;
 
-	secondaryBufferSize = bufferSize;
-	result = dsound->CreateSoundBuffer(&secondaryBufferDesc, &secondaryBuffer, 0);
+	secondaryBufferSize = secondaryBufferSize;
+	HRESULT result = dsound->CreateSoundBuffer(&secondaryBufferDesc, &secondaryBuffer, 0);
 	if (!SUCCEEDED(result))
 	{
 		LogError("Could not create secondary sound buffer.\n");
 		LogWinError();
 		return;
 	}
-
 }
 
 
-
-void PlaySquareWave() 
+void AudioPlayback::CreateSquareWave()
 {
-	DWORD playCursor; 
-	DWORD writeCursor;
-	
+	DWORD byteToLock = ; // The byte in the buffer to start locking so we can write new audio (after write buffer)
+	DWORD bytesToWrite = ; // How many bytes we intend to write to the buffer. DSound needs this so it can determine how many regions to return to us
+	LPVOID audioRegion1;
+	DWORD audioRegionSize1;
+	LPVOID audioRegion2;
+	DWORD audioRegionSize2;
 
-	if (SUCCEEDED(secondaryBuffer->GetCurrentPosition(&playCursor, &writeCursor)))
-	{
-		VOID* region1;
-		DWORD region1Size;
-		VOID* region2;
-		DWORD region2Size;
-		DWORD byteToLock = runningSampleIndex * bytesPerSample % secondaryBufferSize;
-		DWORD byteToWrite;
-		if (byteToLock > playCursor)
-		{
-			byteToWrite = secondaryBufferSize - byteToLock;
-			byteToWrite += playCursor;
-		} else
-		{
-			byteToWrite = playCursor - byteToLock;
-		}
-
-		HRESULT lockResult = secondaryBuffer->Lock(
-			byteToLock, byteToWrite, &region1,
-			&region1Size, &region2, &region2Size, 0
-		);
-
-		if (SUCCEEDED(lockResult))
-		{
-			int hz = 256;
-			int sampleSize = 48000;
-			int squareWavePeriod = sampleSize / hz;
-			int halfSquareWavePeriod = squareWavePeriod / 2;
-			DWORD reqion1SampleCount = region1Size / bytesPerSample;
-			short* sampleOut = (short*)region1;
-			for (DWORD sampleIndex = 0; sampleIndex < reqion1SampleCount; sampleIndex++)
-			{
-				short sampleValue = ((runningSampleIndex++ / halfSquareWavePeriod) % 2) ? 1000 : -1000;
-				*sampleOut++ = sampleValue;
-				*sampleOut++ = sampleValue;
-			}
-			sampleOut = (short*)region2;
-			DWORD region2SampleCount = region2Size / bytesPerSample;
-			for (DWORD sampleIndex = 0; sampleIndex < region2SampleCount; sampleIndex++)
-			{
-				short sampleValue = ((runningSampleIndex++ / halfSquareWavePeriod) % 2) ? 1000 : -1000;
-				*sampleOut++ = sampleValue;
-				*sampleOut++ = sampleValue;
-			}
-
-			secondaryBuffer->Unlock(&region1, region1Size, &region2, region2Size);
-		}
-	}
-}
-
-void StartPlayback()
-{
-	secondaryBuffer->Play(
-		0,
-		0,
-		DSBPLAY_LOOPING
+	HRESULT lockResult = secondaryBuffer->Lock(
+		byteToLock, bytesToWrite,
+		&audioRegion1, &audioRegionSize1,
+		&audioRegion2, &audioRegionSize2, 0
 	);
+
+	if (!SUCCEEDED(lockResult))
+	{
+		LogError("Could not lock secondary buffer.");
+		LogWinError();
+	}
+
+	// Enusre regions are a proper multiple of sample size (2 channels, 2 bytes each = 4 bytes)
+	assert(audioRegionSize1 % 4 == 0);
+	assert(audioRegionSize2 % 4 == 0);
+
+	int middleC = 261;
+	int samplesPerCycle = sampleRate / middleC;
+	int halfSpC = samplesPerCycle / 2;
+	int volumeLevel = 3000;
+	int squareWavCount = 0;
+
+	// Fill region 1 with samples
+	int sampleCount1 = audioRegionSize1 / bytesPerSample;
+	short* sampleOut = (short*)audioRegion1;
+	for (int sampleIndex = 0; sampleIndex < sampleCount1; sampleIndex++)
+	{
+		if (!squareWavCount)
+		{
+			squareWavCount = samplesPerCycle;
+		}
+		int sampleValue = (squareWavCount > halfSpC) ? volumeLevel : -volumeLevel;
+		*sampleOut++ = sampleValue;
+		*sampleOut++ = sampleValue;
+		squareWavCount--;
+	}
+
+	// Fill region 2 with samples
+	int sampleCount2 = audioRegionSize2 / bytesPerSample;
+	sampleOut = (short*)audioRegion2;
+	for (int sampleIndex = 0; sampleIndex < sampleCount2; sampleIndex++)
+	{
+		if (!squareWavCount)
+		{
+			squareWavCount = samplesPerCycle;
+		}
+		int sampleValue = (squareWavCount > halfSpC) ? volumeLevel : -volumeLevel;
+		*sampleOut++ = sampleValue;
+		*sampleOut++ = sampleValue;
+		squareWavCount--;
+	}
 }

@@ -19,6 +19,7 @@ public:
 private:
   bool _runGame;
   Win32Platform* _platform;
+  AudioPlayback _audio;
 
   // TODO: Debug only, delete when done
   float xOffset;

@@ -1,7 +1,9 @@
 #pragma once
 #include <DSound.h>
 #include <windows.h>
+#include <cassert>
 #include "CarbonLogger.h"
+
 
 /*
  NOTE (joe): Using DirectSound to follow along with Casey's videos. Need to upgrade to WASAPI once comfortable with DirectSound
@@ -32,13 +34,62 @@ typedef DSOUND_CREATE_SOUND_BUFFER(dsound_create_sound_buffer);
 
 
 /**
- * @brief Load DirectSound DLL and initialize DirectSound hardware
-*/
-void DSoundInitialize(HWND windowHandle, int bufferSize);
-
-/**
 * @brief Play sqauare wave
 */
 void PlaySquareWave();
 
 void StartPlayback();
+
+/**
+ * @brief Responsible for handling all audio playback code and configuration
+ */
+class AudioPlayback {
+public:
+	/**
+	 * @brief Sample rate of the audio. Default is 48k
+	 */
+	int sampleRate = 48000;
+private:
+	LPDIRECTSOUNDBUFFER secondaryBuffer;
+	int secondaryBufferSize;
+	WAVEFORMATEX wavFormat;
+	HINSTANCE dsoundDll;
+	LPDIRECTSOUND dsound;
+	/**
+	 * @brief How many bytes in each sample of audio(2 channels)
+	 */
+	int bytesPerSample = 4;
+	/**
+	 * Number of channels to send output to (2 channels by default = LEFT & RIGHT)
+	 */
+	int numberOfChannels = 2;
+	/**
+	 * @brief // Number of bits per sample of audio (for 1 channel)
+	 */
+	int bitsPerSample = 16;
+	/**
+	 * @brief The size of the buffer in seconds (will be converted to byte size based on 
+	 * the number of seconds of audio wanting to be played)
+	 */
+	int bufferSizeSeconds = 1;
+
+public:
+	AudioPlayback() = default;
+
+	/**
+	 * @brief Initialize DirectSound, audio devices, and buffers
+	 * @param handle Window Handle
+	 * @param bufferLengthInSeconds The number of seconds of audio to be stored in secondary buffer
+	 */
+	AudioPlayback(HWND handle, int bufferLengthInSeconds);
+
+	/**
+	 * @brief Play sample square wave in middle C for debugging purposes
+	 */
+	void PlaySample();
+
+private:
+	void CreateSquareWave();
+	void CreatePrimaryBuffer(HWND handle);
+	void CreateSecondaryBuffer(HWND handle);
+};

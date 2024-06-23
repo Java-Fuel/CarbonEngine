@@ -10,6 +10,8 @@ Renderer::Renderer(Win32Platform* platform, int targetFps)
 	yOffset = 10;
 	squareWavCounter = 0;
 
+	this->_audio = AudioPlayback(platform->windowHandle, 1);
+
 	PlatformEventManager* current = PlatformEventManager::current();
 	current->subscribe(PlatformEventType::WINDOW_CLOSE, new PlatformEventHandler<Renderer>(this, &Renderer::handleWindowClose));
 }
@@ -26,8 +28,6 @@ Renderer::~Renderer()
 void Renderer::start()
 {
 	_runGame = true;
-	DSoundInitialize(_platform->windowHandle, 48000*2*2);
-	StartPlayback();
 	initXInput();
 	run();
 }
@@ -51,7 +51,6 @@ void Renderer::run()
 		processInput();
 		update();
 		fixedUpdate();
-		PlaySquareWave();
 		xOffset += 0.1;
 		yOffset += 0.1;
 
