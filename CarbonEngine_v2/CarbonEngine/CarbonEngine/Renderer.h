@@ -5,8 +5,9 @@
 #include "ControllerInput.h"
 #include "PlatformEventManager.h"
 #include "Audio.h"
-#include "Dsound.h"
-
+#include <Dsound.h>
+#include <profileapi.h>
+#include <stdio.h>
 #include <string>
 
 
@@ -25,6 +26,7 @@ private:
   float xOffset;
   float yOffset;
   int squareWavCounter; 
+  bool playSound = false;
 
 public:
   Renderer(Win32Platform* platform, int targetFps = 60);

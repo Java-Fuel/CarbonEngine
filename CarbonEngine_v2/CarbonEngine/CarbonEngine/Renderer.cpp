@@ -28,7 +28,9 @@ Renderer::~Renderer()
 void Renderer::start()
 {
 	_runGame = true;
+	_audio.CreateSquareWave(true);
 	initXInput();
+	_audio.PlaySample();
 	run();
 }
 
@@ -42,18 +44,48 @@ void Renderer::stop()
 /** Private Methods **/
 void Renderer::run()
 {
-	unsigned int prevFrameStart = _platform->getTick();
+	LARGE_INTEGER lastCount;
+	QueryPerformanceCounter(&lastCount);
 
+	LARGE_INTEGER frequency;
+	QueryPerformanceFrequency(&frequency);
+
+	unsigned long lastRdtsc = __rdtsc();
+	long count = 1;
+	long long runningFps = 0;
+	long long runningGc = 0;
 	while (_runGame)
 	{
-		unsigned int currentFrameStart = _platform->getTick();
-		prevFrameStart = currentFrameStart;
 		processInput();
 		update();
 		fixedUpdate();
+		_audio.CreateSquareWave();
 		xOffset += 0.1;
 		yOffset += 0.1;
 
+		LARGE_INTEGER endCount;
+		QueryPerformanceCounter(&endCount);
+
+		unsigned long endRdtsc = __rdtsc();
+
+		long long countDelta = endCount.QuadPart - lastCount.QuadPart;
+		unsigned long long rdtscDelta = lastRdtsc - endRdtsc;
+		long long msPerFrame = ((1000 * countDelta) / frequency.QuadPart);
+		long long fps = (frequency.QuadPart / countDelta);
+		unsigned long long gc = rdtscDelta / (1000 * 1000 * 1000);
+		runningFps += fps;
+		runningGc += gc;
+		long avgFps = runningFps / count;
+		long avgGc = runningGc / count;
+		long avgSpeed = avgGc * avgFps;
+
+		char buffer[256];
+		sprintf_s(buffer, "Elapsed MS: %lld ms, AVG FPS: %ld f/s, GcPF: %lu Gc/f, AVG Speed: %ld hz", msPerFrame, avgFps, avgGc, avgSpeed);
+		LogInfo(buffer);
+
+		lastCount = endCount;
+		lastRdtsc = endRdtsc;
+		count++;
 	}
 }
 

@@ -1,9 +1,12 @@
 #pragma once
+#define _USE_MATH_DEFINES
+
 #include <DSound.h>
 #include <windows.h>
 #include <cassert>
+#include <cmath>
 #include "CarbonLogger.h"
-
+ 
 
 /*
  NOTE (joe): Using DirectSound to follow along with Casey's videos. Need to upgrade to WASAPI once comfortable with DirectSound
@@ -31,14 +34,6 @@ typedef DSOUND_CREATE(dsound_create_com);
 */
 #define DSOUND_CREATE_SOUND_BUFFER(name) HRESULT name(LPCDSBUFFERDESC pcDSBufferDesc, LPDIRECTSOUNDBUFFER* ppDSBuffer, LPUNKNOWN pUnkOuter)
 typedef DSOUND_CREATE_SOUND_BUFFER(dsound_create_sound_buffer);
-
-
-/**
-* @brief Play sqauare wave
-*/
-void PlaySquareWave();
-
-void StartPlayback();
 
 /**
  * @brief Responsible for handling all audio playback code and configuration
@@ -72,6 +67,12 @@ private:
 	 * the number of seconds of audio wanting to be played)
 	 */
 	int bufferSizeSeconds = 1;
+	/**
+	 * @brief Running count of samples we have written to in our secondary buffer. Used to 'unwrap' the sound buffer
+	 * and make writing to it easier to implement.
+	 */
+	unsigned int runningSampleIndex = 0;
+	bool soundIsPlaying = false;
 
 public:
 	AudioPlayback() = default;
@@ -88,8 +89,12 @@ public:
 	 */
 	void PlaySample();
 
+	/**
+	 * @brief Create square wave to play as a debug sample
+	 */
+	void CreateSquareWave(bool fillBuffer = false);
+
 private:
-	void CreateSquareWave();
 	void CreatePrimaryBuffer(HWND handle);
 	void CreateSecondaryBuffer(HWND handle);
 };

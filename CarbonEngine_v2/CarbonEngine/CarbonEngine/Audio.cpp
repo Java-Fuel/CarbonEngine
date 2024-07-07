@@ -3,7 +3,7 @@
 
 /* -- DirectSound DLL Fallback Functions -- */
 // Fallback implementation for DirectSoundCreate 
-DSOUND_CREATE(DSoundCreateStub) 
+DSOUND_CREATE(DSoundCreateStub)
 {
 	return (0);
 }
@@ -76,6 +76,98 @@ AudioPlayback::AudioPlayback(HWND handle, int bufferLengthInSeconds)
 
 void AudioPlayback::PlaySample()
 {
+	secondaryBuffer->Play(0, 0, DSBPLAY_LOOPING);
+}
+
+void AudioPlayback::CreateSquareWave(bool fillBuffer)
+{
+
+	DWORD playCursor;
+	DWORD writeCursor;
+	HRESULT positionResult = secondaryBuffer->GetCurrentPosition(&playCursor, &writeCursor);
+	if (!SUCCEEDED(positionResult))
+	{
+		LogError("Could not get current play or write position from secondary buffer.");
+		LogWinError();
+	}
+
+
+	DWORD byteToLock = (runningSampleIndex * bytesPerSample) % secondaryBufferSize; // The byte in the buffer to start locking so we can write new audio (after write buffer). This is the byte we start writing from
+	DWORD bytesToWrite = 0; // How many bytes we intend to write to the buffer. DSound needs this so it can determine how many regions to return to us
+	
+	if (!fillBuffer)
+	{
+		if (byteToLock > playCursor)
+		{
+			bytesToWrite = secondaryBufferSize - byteToLock; // region 1
+			bytesToWrite += playCursor; // region 2
+		}
+		else
+		{
+			// We always write forward, from the byte to lock to the play cursor if there is only 1 region
+			bytesToWrite = playCursor - byteToLock;
+		}
+	} 
+	else
+	{
+		bytesToWrite = secondaryBufferSize;
+		byteToLock = 0;
+	}
+
+	LPVOID audioRegion1;
+	DWORD audioRegionSize1;
+	LPVOID audioRegion2;
+	DWORD audioRegionSize2;
+
+	HRESULT lockResult = secondaryBuffer->Lock(
+		byteToLock, bytesToWrite,
+		&audioRegion1, &audioRegionSize1,
+		&audioRegion2, &audioRegionSize2, 0
+	);
+
+	// NOTE: This will always fail if bytesToWrite = 0
+	if (!SUCCEEDED(lockResult))
+	{
+		return;
+	}
+
+	// Enusre regions are a proper multiple of sample size (2 channels, 2 bytes each = 4 bytes)
+	assert(audioRegionSize1 % 4 == 0);
+	assert(audioRegionSize2 % 4 == 0);
+
+	int middleC = 261;
+	int samplesPerCycle = sampleRate / middleC;
+	int halfSpC = samplesPerCycle / 2;
+	int volumeLevel = 3000;
+
+	// Fill region 1 with samples
+	int sampleCount1 = audioRegionSize1 / bytesPerSample;
+	short* sampleOut = (short*)audioRegion1;
+	for (int sampleIndex = 0; sampleIndex < sampleCount1; sampleIndex++)
+	{
+		float t = 2.0f * M_PI * (float)runningSampleIndex / (float)samplesPerCycle;
+		float sineValue = sinf(t);
+		short sampleValue = (short)(sineValue * volumeLevel);
+		*sampleOut++ = sampleValue;
+		*sampleOut++ = sampleValue;
+		runningSampleIndex++;
+	}
+
+	// Fill region 2 with samples
+	int sampleCount2 = audioRegionSize2 / bytesPerSample;
+	sampleOut = (short*)audioRegion2;
+	for (int sampleIndex = 0; sampleIndex < sampleCount2; sampleIndex++)
+	{
+		float t = 2.0f * M_PI * (float)runningSampleIndex / (float)samplesPerCycle;
+		float sineValue = sinf(t);
+		short sampleValue = (short)(sineValue * volumeLevel);
+		*sampleOut++ = sampleValue;
+		*sampleOut++ = sampleValue;
+		runningSampleIndex++;
+	}
+
+	secondaryBuffer->Unlock(audioRegion1, audioRegionSize1, audioRegion2, audioRegionSize2);
+	soundIsPlaying = true;
 
 }
 
@@ -132,64 +224,4 @@ void AudioPlayback::CreateSecondaryBuffer(HWND handle)
 }
 
 
-void AudioPlayback::CreateSquareWave()
-{
-	DWORD byteToLock = ; // The byte in the buffer to start locking so we can write new audio (after write buffer)
-	DWORD bytesToWrite = ; // How many bytes we intend to write to the buffer. DSound needs this so it can determine how many regions to return to us
-	LPVOID audioRegion1;
-	DWORD audioRegionSize1;
-	LPVOID audioRegion2;
-	DWORD audioRegionSize2;
 
-	HRESULT lockResult = secondaryBuffer->Lock(
-		byteToLock, bytesToWrite,
-		&audioRegion1, &audioRegionSize1,
-		&audioRegion2, &audioRegionSize2, 0
-	);
-
-	if (!SUCCEEDED(lockResult))
-	{
-		LogError("Could not lock secondary buffer.");
-		LogWinError();
-	}
-
-	// Enusre regions are a proper multiple of sample size (2 channels, 2 bytes each = 4 bytes)
-	assert(audioRegionSize1 % 4 == 0);
-	assert(audioRegionSize2 % 4 == 0);
-
-	int middleC = 261;
-	int samplesPerCycle = sampleRate / middleC;
-	int halfSpC = samplesPerCycle / 2;
-	int volumeLevel = 3000;
-	int squareWavCount = 0;
-
-	// Fill region 1 with samples
-	int sampleCount1 = audioRegionSize1 / bytesPerSample;
-	short* sampleOut = (short*)audioRegion1;
-	for (int sampleIndex = 0; sampleIndex < sampleCount1; sampleIndex++)
-	{
-		if (!squareWavCount)
-		{
-			squareWavCount = samplesPerCycle;
-		}
-		int sampleValue = (squareWavCount > halfSpC) ? volumeLevel : -volumeLevel;
-		*sampleOut++ = sampleValue;
-		*sampleOut++ = sampleValue;
-		squareWavCount--;
-	}
-
-	// Fill region 2 with samples
-	int sampleCount2 = audioRegionSize2 / bytesPerSample;
-	sampleOut = (short*)audioRegion2;
-	for (int sampleIndex = 0; sampleIndex < sampleCount2; sampleIndex++)
-	{
-		if (!squareWavCount)
-		{
-			squareWavCount = samplesPerCycle;
-		}
-		int sampleValue = (squareWavCount > halfSpC) ? volumeLevel : -volumeLevel;
-		*sampleOut++ = sampleValue;
-		*sampleOut++ = sampleValue;
-		squareWavCount--;
-	}
-}

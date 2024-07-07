@@ -1,8 +1,5 @@
 #include "Win32Platform.h"
 
-
-
-
 /**
  * @brief Windows Callback function to respond to Windows events
  * @param handle a handle to the window where event occurred
